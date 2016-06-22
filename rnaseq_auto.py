@@ -30,6 +30,10 @@ import Rseq
 
 ext = raw_input('\nSpecify file extension of the raw-data (without .): ')
 
+while ext not in ['fastq', 'fasta']:
+    print('Please rename your reads to the rigth file-extension [fastq or fasta]')
+    ext = raw_input('Specify file extension: ')
+
 files = glob.glob('./*.' + ext)
 bow_indx = raw_input(
     'Please enter the path and the prefix (eg. Tbgenome) to your bowtie genome index: ')
@@ -40,9 +44,9 @@ genome_gtf = raw_input('Path to genome gtf file: ')
 # Getting informations on how the data should be processed
 exec_adapters = raw_input(
     '\nShould a list of adapters be produced by FastQC? y/n: ')
-exec_cutadat = raw_input('\nShould the adapters be removed? y/n: ')
+exec_cutadapt = raw_input('\nShould the adapters be removed? y/n: ')
 
-if exec_cutadat == 'y':
+if exec_cutadapt == 'y':
     if not os.path.exists('./adapters'):
         print '\n\nThe adapters-folder does not exist! Adapters will be generated...'
         exec_adapters = 'y'
@@ -87,13 +91,13 @@ if exec_adapters == 'y':
         print '\n\n' + fname + ' adapter list generated\n\n'
 
 
-if exec_cutadat == 'y':
+if exec_cutadapt == 'y':
     for fname in fnames:
         # This function removes the adaptors found before
         Rseq.cutadapt(fname, ext, site, seq_min_len=min_len)
 
 
-if exec_cutadat == 'y':
+if exec_cutadapt == 'y':
     for fname in fnames:
 
         fpath = './rm_adapt/' + fname + '/' + fname + '_processed.fastq'
