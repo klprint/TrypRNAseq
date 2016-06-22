@@ -7,3 +7,5 @@ bam_files
 reads
 *.pyc
 *.fastq
+
+*.sh

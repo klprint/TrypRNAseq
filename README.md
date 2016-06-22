@@ -10,6 +10,9 @@ All dependencies need to be reachable via the command line.
 - [Cutadapt version 1.7.1](https://cutadapt.readthedocs.io/en/stable/)
 - [bowtie2 version 2.0.0-beta7](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
 
+## Usage
+In the following, the usage of TrypRNAseq is described:
+1. Clone the repository to your desired destination
 
 ## Licence
 This pipeline was created by Kevin Leiss of the [Clayton lab](http://www.zmbh.uni-heidelberg.de/clayton/default.shtml) (ZMBH, Centre for Molecular Biology Heidelberg, Germany).
