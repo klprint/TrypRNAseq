@@ -3,9 +3,9 @@ The TrypRNAseq pipeline is designed to take raw Illumina reads, does quality con
 
 ## Dependencies
 All dependencies need to be reachable via the command line.
-- FastQC
-- Cutadapt
-- bowtie2
+- [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+- [Cutadapt](https://cutadapt.readthedocs.io/en/stable/)
+- [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
 
 ## Information
 This code is still pre-alpha and is now under construction and cleanup!
