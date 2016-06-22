@@ -54,14 +54,19 @@ if exec_cutadat == 'y':
     adap_max = raw_input(
         'How many adapters should be used for removal (the more the longer it takes)[int OR all]: ')
 
-# genome = raw_input('Please specify the path of the genome .gtf file: ')
 
+
+# Generating a list of to be processed files:
+fnames = []
+fname_ext = ''
+for f in files:
+    fname = f.split('.')[1]
+    fname = fname[1:]
+    fname_ext = fname + '.' + ext
+    fnames.append(fname)
 
 if exec_adapters == 'y':
-    for f in files:
-        fname = f.split('.')[1]
-        fname = fname[1:]
-        fname_ext = fname + '.' + ext
+    for fname in fnames:
 
         # Analyzing the data with FastQC
         print '\nFastQC data analysis\n'
@@ -83,58 +88,41 @@ if exec_adapters == 'y':
 
 
 if exec_cutadat == 'y':
-    for f in files:
-        fname = f.split('.')[1]
-        fname = fname[1:]
-        fname_ext = fname + '.' + ext
+    for fname in fnames:
         # This function removes the adaptors found before
         Rseq.cutadapt(fname, ext, site, seq_min_len=min_len)
 
 
 if exec_cutadat == 'y':
-    for f in files:
-        fname = f.split('.')[1]
-        fname = fname[1:]
+    for fname in fnames:
 
         fpath = './rm_adapt/' + fname + '/' + fname + '_processed.fastq'
         # Here bowtie is started using the processed data
         Rseq.bowtie(fname, filepath=fpath, bow_index=bow_indx)
 else:
-    for f in files:
-        fname = f.split('.')[1]
-        fname = fname[1:]
-        fname_ext = fname + '.' + ext
-        fpath = './' + fname_ext
+    for fname in fnames:
+        fpath = './' + fname + '.' + fname_ext
 
         # Here bowtie is started using the raw data, if no adapter removal was
         # done
         Rseq.bowtie(filename=fname, filepath=fpath, bow_index=bow_indx)
 
 
-for f in files:
-    fname = f.split('.')[1]
-    fname = fname[1:]
-    fname_ext = fname + '.' + ext
+for fname in fnames:
     fpath = './bowalign/' + fname + '_bow.sam'
 
     print '\n\nPreparing the BAM files out of SAM files for \n' + fname
     Rseq.sam_process(filename=fname, filepath=fpath)
 
 
-for f in files:
-    fname = f.split('.')[1]
-    fname = fname[1:]
-    fname_ext = fname + '.' + ext
+for fname in fnames:
     fpath = './bam_files/' + fname + '_sorted.bam'
 
     print 'Generating index files for\n' + fname
     Rseq.sam_index(fpath)
 
 
-for f in files:
-    fname = f.split('.')[1]
-    fname = fname[1:]
-    fname_ext = fname + '.' + ext
+for fname in fnames:
     fpath = './bam_files/' + fname + '_sorted.bam'
 
     Rseq.cds_only_counts(genome_gtf, fpath, fname)
