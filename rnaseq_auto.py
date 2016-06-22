@@ -29,7 +29,6 @@ import Rseq
 # Let the user specify the file-extension of the files to be processed
 
 ext = raw_input('\nSpecify file extension of the raw-data (without .): ')
-
 # Check whether the file extension is fastq or fasta.
 # This is important to prevent cutadapt from
 # prompting an error.
@@ -40,35 +39,49 @@ while ext not in ['fastq', 'fasta']:
 # Identifying the files with the previously given file extension:
 files = glob.glob('./*.' + ext)
 
-# Getting the bowtie2 index file
-bow_indx = raw_input(
-    'Please enter the path and the prefix (eg. Tbgenome) to your bowtie genome index: ')
+print('\n\nDefault-parameters: \n- Provided Bowtie Tryp. index \n- Provided .gtf file for read count \n- Remove all found adapters on both sides \n- Keep a minimal length of 30bp reads')
+exec_default = raw_input('Should the pipeline be executed with default parameters? y/n :')
 
-# Getting the gtf file for read counting
-genome_gtf = raw_input('Path to genome gtf file: ')
+if exec_default in ['y', 'yes', 'Y']:
+    bow_indx = 'bowtieindex/TbGenome'
+    genome_gtf = 'Tb_cds.gtf'
+    exec_adapters = 'y'
+    exec_cutadapt = 'y'
+    site = 'b'
+    min_len = '30'
+    adap_max = 'all'
+
+else:
+
+    # Getting the bowtie2 index file
+    bow_indx = raw_input(
+        'Please enter the path and the prefix (eg. Tbgenome) to your bowtie genome index: ')
+
+    # Getting the gtf file for read counting
+    genome_gtf = raw_input('Path to genome gtf file: ')
 
 
-# Getting informations on how the data should be processed
-# If only the quality control of FastQC should be used,
-# but another list of adapters be removed, place a fasta file
-# with the adapters in the subfolder 'adapters'.
-# The file should have the same name as the file beeing processed with the extension:
-# _adapters.fasta
-exec_adapters = raw_input(
-    '\nShould a list of adapters be produced by FastQC? y/n: ')
-exec_cutadapt = raw_input('\nShould the adapters be removed? y/n: ')
+    # Getting informations on how the data should be processed
+    # If only the quality control of FastQC should be used,
+    # but another list of adapters be removed, place a fasta file
+    # with the adapters in the subfolder 'adapters'.
+    # The file should have the same name as the file beeing processed with the extension:
+    # _adapters.fasta
+    exec_adapters = raw_input(
+        '\nShould a list of adapters be produced by FastQC? y/n: ')
+    exec_cutadapt = raw_input('\nShould the adapters be removed? y/n: ')
 
-if exec_cutadapt == 'y':
-    if not os.path.exists('./adapters'):
-        print '\n\nThe adapters-folder does not exist! Adapters will be generated...'
-        exec_adapters = 'y'
+    if exec_cutadapt == 'y':
+        if not os.path.exists('./adapters'):
+            print '\n\nThe adapters-folder does not exist! Adapters will be generated...'
+            exec_adapters = 'y'
 
-    site = raw_input(
-        'Where are the adapters located? 3(a), 5(g) or both possible(b): ')
-    min_len = raw_input(
-        'What is the minimal sequence length which should be kept?: ')
-    adap_max = raw_input(
-        'How many adapters should be used for removal (the more the longer it takes)[int OR all]: ')
+        site = raw_input(
+            'Where are the adapters located? 3(a), 5(g) or both possible(b): ')
+        min_len = raw_input(
+            'What is the minimal sequence length which should be kept?: ')
+        adap_max = raw_input(
+            'How many adapters should be used for removal (the more the longer it takes)[int OR all]: ')
 
 
 
