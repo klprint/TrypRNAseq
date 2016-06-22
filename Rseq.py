@@ -106,7 +106,7 @@ def cutadapt(filename, ext, site, seq_min_len):
 # The genome index for bowtie is stored unter bow_index
 # bow_index consists of the absolute path and the prefix of the indices
 # eg. Tbgenome
-def bowtie(filename, filepath, bow_index):
+def bowtie(filename, filepath, bow_index, no_threads = '2'):
     import os
     os.system('mkdir bowalign')
 
@@ -116,7 +116,7 @@ def bowtie(filename, filepath, bow_index):
     # If your computer runs too slow, decrease the integer after -p.
     # Besides it saves the statistics of each alignment to a file trailed by
     # _log.txt
-    os.system('bowtie2 -k 20 -t -p 4 -x ' + bow_index + ' ' + filepath +
+    os.system('bowtie2 -k 20 -t -p ' + no_threads + ' -x ' + bow_index + ' ' + filepath +
               ' -S ./bowalign/' + filename +
               '_bow.sam 2> ./bowalign/' + filename + '_log.txt')
 
