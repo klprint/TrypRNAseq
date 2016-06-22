@@ -30,18 +30,30 @@ import Rseq
 
 ext = raw_input('\nSpecify file extension of the raw-data (without .): ')
 
+# Check whether the file extension is fastq or fasta.
+# This is important to prevent cutadapt from
+# prompting an error.
 while ext not in ['fastq', 'fasta']:
     print('Please rename your reads to the rigth file-extension [fastq or fasta]')
     ext = raw_input('Specify file extension: ')
 
+# Identifying the files with the previously given file extension:
 files = glob.glob('./*.' + ext)
+
+# Getting the bowtie2 index file
 bow_indx = raw_input(
     'Please enter the path and the prefix (eg. Tbgenome) to your bowtie genome index: ')
 
+# Getting the gtf file for read counting
 genome_gtf = raw_input('Path to genome gtf file: ')
 
 
 # Getting informations on how the data should be processed
+# If only the quality control of FastQC should be used,
+# but another list of adapters be removed, place a fasta file
+# with the adapters in the subfolder 'adapters'.
+# The file should have the same name as the file beeing processed with the extension:
+# _adapters.fasta
 exec_adapters = raw_input(
     '\nShould a list of adapters be produced by FastQC? y/n: ')
 exec_cutadapt = raw_input('\nShould the adapters be removed? y/n: ')
@@ -60,7 +72,7 @@ if exec_cutadapt == 'y':
 
 
 
-# Generating a list of to be processed files:
+# Generating a list of to be processed filenames:
 fnames = []
 fname_ext = ''
 for f in files:
@@ -69,7 +81,8 @@ for f in files:
     fname_ext = fname + '.' + ext
     fnames.append(fname)
 
-if exec_adapters == 'y':
+# Executing the FastQC algorithm
+if exec_adapters in ['y', 'Y', 'yes']:
     for fname in fnames:
 
         # Analyzing the data with FastQC
@@ -91,18 +104,21 @@ if exec_adapters == 'y':
         print '\n\n' + fname + ' adapter list generated\n\n'
 
 
-if exec_cutadapt == 'y':
+# Remove the adapters, stored in 'adapters'
+if exec_cutadapt in ['y', 'Y', 'yes']:
     for fname in fnames:
         # This function removes the adaptors found before
         Rseq.cutadapt(fname, ext, site, seq_min_len=min_len)
 
 
-if exec_cutadapt == 'y':
+# Running bowtie either on the trimmed reads....
+if exec_cutadapt in ['y', 'Y', 'yes']:
     for fname in fnames:
 
         fpath = './rm_adapt/' + fname + '/' + fname + '_processed.fastq'
         # Here bowtie is started using the processed data
         Rseq.bowtie(fname, filepath=fpath, bow_index=bow_indx)
+# ... or on the original reads
 else:
     for fname in fnames:
         fpath = './' + fname + '.' + fname_ext
