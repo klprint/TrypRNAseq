@@ -151,7 +151,7 @@ if exec_cutadapt in ['y', 'Y', 'yes']:
 
         fpath = './rm_adapt/' + fname + '/' + fname + '_processed.fastq'
         # Here bowtie is started using the processed data
-        print('Starting alignment of ' + fname)
+        print('\n\nStarting alignment of ' + fname)
         Rseq.bowtie(fname, filepath=fpath, bow_index=bow_indx, no_threads = thread_no)
 # ... or on the original reads
 else:
@@ -160,7 +160,7 @@ else:
 
         # Here bowtie is started using the raw data, if no adapter removal was
         # done
-        print('Starting alignment of ' + fname)
+        print('\n\nStarting alignment of ' + fname)
         Rseq.bowtie(filename=fname, filepath=fpath, bow_index=bow_indx, no_threads = thread_no)
 
 

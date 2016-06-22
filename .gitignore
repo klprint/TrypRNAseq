@@ -9,3 +9,7 @@ reads
 *.fastq
 
 *.sh
+
+gzipped_reads
+
+testreads.fastq.gz
