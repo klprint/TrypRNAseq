@@ -1,4 +1,9 @@
-
+testreads.txt
+adapters
+bowalign
+fqc_result
+rm_adapt
+bam_files
+reads
 *.pyc
-
 *.fastq
