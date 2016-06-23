@@ -91,13 +91,13 @@ def cutadapt(filename, ext, site, seq_min_len):
     untr_name = './rm_adapt/' + fname + '/' + fname + '_untrimmed.fastq'
 
     # Trimming the data
-    print '\n' + fname + ' processing.'
+    print('\n' + fname + ' processing.')
     os.system('cutadapt -' + site + ' file:./adapters/' + fname + '_adapters.fasta' + ' -m ' +
               seq_min_len + ' --untrimmed-output ' + untr_name +
               ' -o ' + trim_name + ' ./' + fname + '.' + ext)
-    print fname + ' finished'
+    print(fname + ' finished')
 
-    print 'Packing the trimmed and untrimmed in a summary file.'
+    print('Packing the trimmed and untrimmed in a summary file.')
     os.system('cat ./rm_adapt/' + fname + '/*.fastq >./rm_adapt/' +
               fname + '/' + fname + '_processed.fastq')
 
@@ -142,7 +142,7 @@ def check_dir():
     user_dir = raw_input('Please specify the location of the raw-files: ')
 
     while not os.path.isdir(user_dir):
-        print 'This directory does not exist, or the path points to a file!'
+        print('This directory does not exist, or the path points to a file!')
         user_dir = raw_input('Please specify the correct path: ')
 
     return user_dir
@@ -167,7 +167,7 @@ def batch_cufflinks(ext, genome):
         fname = fname[1:]
         fpath = './bam_files/' + fname + '_sorted.bam'
 
-        print 'Using cufflinks for read counting: \n'
+        print('Using cufflinks for read counting: \n')
         Rseq.cufflinks(fpath, genome, fname)
 
 
