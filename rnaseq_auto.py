@@ -46,6 +46,9 @@ for f in files:
     fname = fname[1:]
     fnames.append(fname)
 
+
+Rseq.print_line()
+# Checking whether files are present with the specified extension
 while len(fnames) == 0:
     print('\n\nFiles can not be found, make sure you used the correct file-extension.')
     ext = raw_input('File extension [gz, fasta, fastq]: ')
@@ -67,6 +70,7 @@ print(('\n\nDefault-parameters: \n'
 exec_default = raw_input('Should the pipeline be executed with default parameters? y/n :')
 thread_no = raw_input('How many numbers of threads should be used?: ')
 
+Rseq.print_line()
 # Unzipping gzipped files and adding correct extension
 if ext == 'gz':
     os.system('mkdir gzipped_reads')
@@ -140,6 +144,7 @@ settingslog.write('-----TrypRNAseq-----\n'
     'Number of rem. adapters:\t' + adap_max)
 
 # Executing the FastQC algorithm
+Rseq.print_line()
 if exec_adapters in ['y', 'Y', 'yes']:
     for fname in fnames:
 
@@ -163,6 +168,7 @@ if exec_adapters in ['y', 'Y', 'yes']:
 
 
 # Remove the adapters, stored in 'adapters'
+Rseq.print_line()
 if exec_cutadapt in ['y', 'Y', 'yes']:
     for fname in fnames:
         # This function removes the adaptors found before
@@ -170,6 +176,7 @@ if exec_cutadapt in ['y', 'Y', 'yes']:
 
 
 # Running bowtie either on the trimmed reads....
+Rseq.print_line()
 if exec_cutadapt in ['y', 'Y', 'yes']:
     for fname in fnames:
 
@@ -180,6 +187,7 @@ if exec_cutadapt in ['y', 'Y', 'yes']:
 # ... or on the original reads
 else:
     for fname in fnames:
+        fname_ext = fname + '.' + ext
         fpath = './' + fname + '.' + fname_ext
 
         # Here bowtie is started using the raw data, if no adapter removal was
@@ -190,21 +198,29 @@ else:
 
 for fname in fnames:
     fpath = './bowalign/' + fname + '_bow.sam'
-
+    Rseq.print_line()
     print '\n\nPreparing the BAM files out of SAM files for \n' + fname
     Rseq.sam_process(filename=fname, filepath=fpath)
 
 
 for fname in fnames:
     fpath = './bam_files/' + fname + '_sorted.bam'
-
+    Rseq.print_line()
     print 'Generating index files for\n' + fname
     Rseq.sam_index(fpath)
 
 
 for fname in fnames:
     fpath = './bam_files/' + fname + '_sorted.bam'
-
+    Rseq.print_line()
+    print('Counting Reads for ' + fname)
     Rseq.cds_only_counts(genome_gtf, fpath, fname)
 
 settingslog.write('\n\nPipeline finished at:\t' + str(datetime.datetime.now().date()) + '\t' + str(datetime.datetime.now().time()))
+print(3*'\n')
+Rseq.print_line()
+Rseq.print_line()
+print('PIPELINE FINISHED')
+Rseq.print_line()
+Rseq.print_line()
+os.system('open ./reads/')
