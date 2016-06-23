@@ -230,3 +230,14 @@ def identify_classes(fname, gene_read, gene_classes):
         hit_output.write(key + '\t' + g_size + '\t' + g_count + '\t' + hit_class + '\n')
 
 
+# Information about the terminal size
+def terminal_size():
+    import fcntl, termios, struct
+    h, w, hp, wp = struct.unpack('HHHH',
+        fcntl.ioctl(0, termios.TIOCGWINSZ,
+        struct.pack('HHHH', 0, 0, 0, 0)))
+    return w, h
+
+def print_line():
+    tw, th = terminal_size()
+    print(tw * '-')
