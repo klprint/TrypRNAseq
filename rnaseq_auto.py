@@ -34,7 +34,7 @@ ext = raw_input('\nSpecify file extension of the raw-data (without \'.\', last e
 # This is important to prevent cutadapt from
 # prompting an error.
 while ext not in ['fastq', 'fasta', 'gz']:
-    print('Please rename your reads to the right file-extension [fastq or fasta]')
+    print('Please rename your reads to the right file-extension [gz (if compressed), fastq or fasta]')
     ext = raw_input('Specify file extension: ')
 
 # Identifying the files with the previously given file extension:
@@ -45,6 +45,16 @@ for f in files:
     fname = f.split('.')[1]
     fname = fname[1:]
     fnames.append(fname)
+
+while len(fnames) == 0:
+    print('\n\nFiles can not be found, make sure you used the correct file-extension.')
+    ext = raw_input('File extension [gz, fasta, fastq]: ')
+    files = glob.glob('./*.' + ext)
+    fnames = []
+    for f in files:
+        fname = f.split('.')[1]
+        fname = fname[1:]
+        fnames.append(fname)
 
 # Ask if default parameters should be used
 print(('\n\nDefault-parameters: \n'
