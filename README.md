@@ -12,7 +12,23 @@ All dependencies need to be reachable via the command line.
 
 ## Usage
 In the following, the usage of TrypRNAseq is described:
+
+
 1. Clone the repository to your desired destination
+2. Add the files containing the reads (can be gzipped, NO tarballs, make sure all have the same extension)
+3. Start the pipeline using: python rnaseq_auto.py
+4. Follow the instructions prompted in the terminal
+
+Now you can choose between default or user specified settings. Default settings are:
+
+```
+Default-parameters: 
+   - Provided Bowtie Tryp. index 
+   - Provided .gtf file for read count 
+   - Remove all found adapters on both sides 
+   - Keep a minimal length of 30bp/read, discard all shorter 
+   - Number of threads = Will be asked for
+```
 
 ## Licence
 This pipeline was created by Kevin Leiss of the [Clayton lab](http://www.zmbh.uni-heidelberg.de/clayton/default.shtml) (ZMBH, Centre for Molecular Biology Heidelberg, Germany).
