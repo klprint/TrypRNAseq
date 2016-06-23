@@ -25,7 +25,8 @@ import glob
 import os
 import Rseq
 import datetime
-
+from multiprocessing.dummy import Pool as ThreadPool
+import itertools
 
 # Let the user specify the file-extension of the files to be processed
 
@@ -70,25 +71,6 @@ print(('\n\nDefault-parameters: \n'
 exec_default = input('Should the pipeline be executed with default parameters? y/n :')
 thread_no = input('How many numbers of threads should be used?: ')
 
-Rseq.print_line()
-# Unzipping gzipped files and adding correct extension
-if ext == 'gz':
-    os.system('mkdir gzipped_reads')
-    print('\nYour files are compressed. They will be decompressed.')
-    ext = input('Please specify the file extension of the decompressed file [fasta, fastq]: ')
-    for one_file in files:
-        fname = one_file.split('.')[1]
-        fname = fname[1:]
-        second_ext = one_file.split('.')[-2]
-        # Copy the original gzipped files to the folder gzipped_reads
-        print('\n\nCopying file ' + fname + ' into folder \'gzipped_reads\'')
-        os.system('cp ' + one_file + ' gzipped_reads\\')
-        # Extract the gzipped content
-        print('Extracting file ' + fname)
-        os.system('gzip -d ' + one_file)
-        # Rename uncompressed files to specified extension
-        print('Correcting file extension for ' + fname)
-        os.system('mv ' + fname + '.' + second_ext + ' ' + fname + '.' + ext)
 
 if exec_default in ['y', 'yes', 'Y']:
     bow_indx = 'bowtieindex/TbGenome'
@@ -132,6 +114,7 @@ else:
         adap_max = input(
             'How many adapters should be used for removal (the more the longer it takes)[int OR all]: ')
 
+
 # Creating a log-file
 settingslog = open('logfile.log', 'w')
 settingslog.write('-----TrypRNAseq-----\n'
@@ -142,6 +125,28 @@ settingslog.write('-----TrypRNAseq-----\n'
     'Adapters removed?\t' + exec_cutadapt + '\n'
     'Minimal kept length:\t' + min_len + '\n'
     'Number of rem. adapters:\t' + adap_max)
+
+
+Rseq.print_line()
+# Unzipping gzipped files and adding correct extension
+if ext == 'gz':
+    os.system('mkdir gzipped_reads')
+    print('\nYour files are compressed. They will be decompressed.')
+    ext = input('Please specify the file extension of the decompressed file [fasta, fastq]: ')
+    for one_file in files:
+        fname = one_file.split('.')[1]
+        fname = fname[1:]
+        second_ext = one_file.split('.')[-2]
+        # Copy the original gzipped files to the folder gzipped_reads
+        print('\n\nCopying file ' + fname + ' into folder \'gzipped_reads\'')
+        os.system('cp ' + one_file + ' gzipped_reads\\')
+        # Extract the gzipped content
+        print('Extracting file ' + fname)
+        os.system('gzip -d ' + one_file)
+        # Rename uncompressed files to specified extension
+        print('Correcting file extension for ' + fname)
+        os.system('mv ' + fname + '.' + second_ext + ' ' + fname + '.' + ext)
+
 
 # Executing the FastQC algorithm
 Rseq.print_line()
@@ -170,10 +175,13 @@ if exec_adapters in ['y', 'Y', 'yes']:
 # Remove the adapters, stored in 'adapters'
 Rseq.print_line()
 if exec_cutadapt in ['y', 'Y', 'yes']:
-    for fname in fnames:
+    pool = ThreadPool(int(thread_no))
+    pool.starmap(Rseq.cutadapt, zip(fnames, itertools.repeat(ext), itertools.repeat(site), itertools.repeat(min_len)))
+    #for fname in fnames:
         # This function removes the adaptors found before
-        Rseq.cutadapt(fname, ext, site, seq_min_len=min_len)
-
+        #Rseq.cutadapt(fname, ext, site, seq_min_len=min_len)
+    pool.close()
+    pool.join()
 
 # Running bowtie either on the trimmed reads....
 Rseq.print_line()
@@ -209,12 +217,21 @@ for fname in fnames:
     print('Generating index files for\n' + fname)
     Rseq.sam_index(fpath)
 
+# Doing the read count
+#for fname in fnames:
+#    fpath = './bam_files/' + fname + '_sorted.bam'
+#    Rseq.print_line()
+#    print('Counting Reads for ' + fname)
+#    Rseq.cds_only_counts(genome_gtf, fpath, fname)
 
+fpaths = []
 for fname in fnames:
-    fpath = './bam_files/' + fname + '_sorted.bam'
-    Rseq.print_line()
-    print('Counting Reads for ' + fname)
-    Rseq.cds_only_counts(genome_gtf, fpath, fname)
+    fpaths.append('./bam_files/' + fname + '_sorted.bam')
+print(fpaths)
+pool = ThreadPool(int(thread_no))
+pool.starmap(Rseq.cds_only_counts, zip(itertools.repeat(genome_gtf), fpaths, fnames))
+pool.close()
+pool.join()
 
 settingslog.write('\n\nPipeline finished at:\t' + str(datetime.datetime.now().date()) + '\t' + str(datetime.datetime.now().time()))
 print(3*'\n')
@@ -223,4 +240,5 @@ Rseq.print_line()
 print('PIPELINE FINISHED')
 Rseq.print_line()
 Rseq.print_line()
+print(3*'\n')
 os.system('open ./reads/')
