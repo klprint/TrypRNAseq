@@ -133,19 +133,25 @@ if ext == 'gz':
     os.system('mkdir gzipped_reads')
     print('\nYour files are compressed. They will be decompressed.')
     ext = input('Please specify the file extension of the decompressed file [fasta, fastq]: ')
-    for one_file in files:
-        fname = one_file.split('.')[1]
-        fname = fname[1:]
-        second_ext = one_file.split('.')[-2]
-        # Copy the original gzipped files to the folder gzipped_reads
-        print('\n\nCopying file ' + fname + ' into folder \'gzipped_reads\'')
-        os.system('cp ' + one_file + ' gzipped_reads\\')
-        # Extract the gzipped content
-        print('Extracting file ' + fname)
-        os.system('gzip -d ' + one_file)
-        # Rename uncompressed files to specified extension
-        print('Correcting file extension for ' + fname)
-        os.system('mv ' + fname + '.' + second_ext + ' ' + fname + '.' + ext)
+    # Parallelized extraction and copying
+    print('Extracting files')
+    pool = ThreadPool(int(thread_no))
+    pool.starmap(Rseq.gz_process, zip(files, itertools.repeat(ext)))
+    pool.close()
+    pool.join()
+    # for one_file in files:
+    #     fname = one_file.split('.')[1]
+    #     fname = fname[1:]
+    #     second_ext = one_file.split('.')[-2]
+    #     # Copy the original gzipped files to the folder gzipped_reads
+    #     print('\n\nCopying file ' + fname + ' into folder \'gzipped_reads\'')
+    #     os.system('cp ' + one_file + ' gzipped_reads\\')
+    #     # Extract the gzipped content
+    #     print('Extracting file ' + fname)
+    #     os.system('gzip -d ' + one_file)
+    #     # Rename uncompressed files to specified extension
+    #     print('Correcting file extension for ' + fname)
+    #     os.system('mv ' + fname + '.' + second_ext + ' ' + fname + '.' + ext)
 
 
 # Executing the FastQC algorithm

@@ -241,3 +241,13 @@ def terminal_size():
 def print_line():
     tw, th = terminal_size()
     print(tw * '-')
+
+
+def gz_process(gz_file, ext):
+    import os
+    fname = gz_file.split('.')[1]
+    fname = fname[1:]
+    second_ext = gz_file.split('.')[-2]
+    os.system('cp ' + gz_file + ' gzipped_reads\\')
+    os.system('gzip -d ' + gz_file)
+    os.system('mv ' + fname + '.' + second_ext + ' ' + fname + '.' + ext)
