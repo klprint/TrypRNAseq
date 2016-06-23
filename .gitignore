@@ -16,4 +16,4 @@ testreads.fastq.gz
 
 *.gz
 
-gzipped_reads/testreads.fastq.gz
+*.log

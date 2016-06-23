@@ -24,6 +24,7 @@
 import glob
 import os
 import Rseq
+import datetime
 
 
 # Let the user specify the file-extension of the files to be processed
@@ -45,22 +46,6 @@ for f in files:
     fname = fname[1:]
     fnames.append(fname)
 
-# Unzipping gzipped files and adding correct extension
-if ext == 'gz':
-    os.system('mkdir gzipped_reads')
-    print('\nYour files are compressed. They will be decompressed.')
-    ext = raw_input('Please specify the file extension of the decompressed file [fasta, fastq]: ')
-    for one_file in files:
-        fname = one_file.split('.')[1]
-        fname = fname[1:]
-        second_ext = one_file.split('.')[-2]
-        # Copy the original gzipped files to the folder gzipped_reads
-        os.system('cp ' + one_file + ' gzipped_reads\\')
-        # Extract the gzipped content
-        os.system('gzip -d ' + one_file)
-        # Rename uncompressed files to specified extension
-        os.system('mv ' + fname + '.' + second_ext + ' ' + fname + '.' + ext)
-
 # Ask if default parameters should be used
 print(('\n\nDefault-parameters: \n'
     '- Provided Bowtie Tryp. index \n'
@@ -71,6 +56,26 @@ print(('\n\nDefault-parameters: \n'
 
 exec_default = raw_input('Should the pipeline be executed with default parameters? y/n :')
 thread_no = raw_input('How many numbers of threads should be used?: ')
+
+# Unzipping gzipped files and adding correct extension
+if ext == 'gz':
+    os.system('mkdir gzipped_reads')
+    print('\nYour files are compressed. They will be decompressed.')
+    ext = raw_input('Please specify the file extension of the decompressed file [fasta, fastq]: ')
+    for one_file in files:
+        fname = one_file.split('.')[1]
+        fname = fname[1:]
+        second_ext = one_file.split('.')[-2]
+        # Copy the original gzipped files to the folder gzipped_reads
+        print('\n\nCopying file ' + fname + ' into folder \'gzipped_reads\'')
+        os.system('cp ' + one_file + ' gzipped_reads\\')
+        # Extract the gzipped content
+        print('Extracting file ' + fname)
+        os.system('gzip -d ' + one_file)
+        # Rename uncompressed files to specified extension
+        print('Correcting file extension for ' + fname)
+        os.system('mv ' + fname + '.' + second_ext + ' ' + fname + '.' + ext)
+
 if exec_default in ['y', 'yes', 'Y']:
     bow_indx = 'bowtieindex/TbGenome'
     genome_gtf = 'Tb_cds.gtf'
@@ -113,7 +118,16 @@ else:
         adap_max = raw_input(
             'How many adapters should be used for removal (the more the longer it takes)[int OR all]: ')
 
-
+# Creating a log-file
+settingslog = open('logfile.log', 'w')
+settingslog.write('-----TrypRNAseq-----\n'
+    'Pipeline started:\t' + str(datetime.datetime.now().date()) + '\t' + str(datetime.datetime.now().time()) + '\n'
+    'Used pipeline settings:\n\n'
+    'BowtieIndex:\t' + bow_indx + '\n'
+    'GTF-File:\t' + genome_gtf + '\n'
+    'Adapters removed?\t' + exec_cutadapt + '\n'
+    'Minimal kept length:\t' + min_len + '\n'
+    'Number of rem. adapters:\t' + adap_max)
 
 # Executing the FastQC algorithm
 if exec_adapters in ['y', 'Y', 'yes']:
@@ -183,4 +197,4 @@ for fname in fnames:
 
     Rseq.cds_only_counts(genome_gtf, fpath, fname)
 
-
+settingslog.write('\n\nPipeline finished at:\t' + str(datetime.datetime.now().date()) + '\t' + str(datetime.datetime.now().time()))
