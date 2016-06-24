@@ -15,8 +15,7 @@ All dependencies need to be reachable via the command line.
 ## Usage
 In the following, the usage of TrypRNAseq is described:
 
-
-1. Clone the repository to your desired destination
+1. Download the latest [version](https://github.com/klprint/TrypRNAseq/releases)
 2. Add the files containing the reads (can be gzipped, NO tarballs, make sure all have the same extension)
 3. Start the pipeline using: python3 rnaseq_auto.py
 4. Follow the instructions prompted in the terminal
