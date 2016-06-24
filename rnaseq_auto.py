@@ -27,6 +27,7 @@ import Rseq
 import datetime
 from multiprocessing.dummy import Pool as ThreadPool
 import itertools
+from threading import Thread
 
 # Let the user specify the file-extension of the files to be processed
 
@@ -139,19 +140,6 @@ if ext == 'gz':
     pool.starmap(Rseq.gz_process, zip(files, itertools.repeat(ext)))
     pool.close()
     pool.join()
-    # for one_file in files:
-    #     fname = one_file.split('.')[1]
-    #     fname = fname[1:]
-    #     second_ext = one_file.split('.')[-2]
-    #     # Copy the original gzipped files to the folder gzipped_reads
-    #     print('\n\nCopying file ' + fname + ' into folder \'gzipped_reads\'')
-    #     os.system('cp ' + one_file + ' gzipped_reads\\')
-    #     # Extract the gzipped content
-    #     print('Extracting file ' + fname)
-    #     os.system('gzip -d ' + one_file)
-    #     # Rename uncompressed files to specified extension
-    #     print('Correcting file extension for ' + fname)
-    #     os.system('mv ' + fname + '.' + second_ext + ' ' + fname + '.' + ext)
 
 
 # Executing the FastQC algorithm
@@ -181,13 +169,11 @@ if exec_adapters in ['y', 'Y', 'yes']:
 # Remove the adapters, stored in 'adapters'
 Rseq.print_line()
 if exec_cutadapt in ['y', 'Y', 'yes']:
-    pool = ThreadPool(int(thread_no))
-    pool.starmap(Rseq.cutadapt, zip(fnames, itertools.repeat(ext), itertools.repeat(site), itertools.repeat(min_len)))
-    #for fname in fnames:
-        # This function removes the adaptors found before
-        #Rseq.cutadapt(fname, ext, site, seq_min_len=min_len)
-    pool.close()
-    pool.join()
+    print('Cutadapt started')
+    threads = [Thread(target = Rseq.cutadapt, args = (fname, ext, site, min_len)) for fname in fnames]
+    for t in threads: t.start()
+    for t in threads: t.join()
+    print('Cutadapt done')
 
 # Running bowtie either on the trimmed reads....
 Rseq.print_line()
