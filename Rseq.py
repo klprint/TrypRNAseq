@@ -77,30 +77,31 @@ def make_ad_fasta(adapters_list, sample_name, no_adapters=80):
 # filename (w/o extension), the extension
 # the site used by the flag (-g/-a/-b) and the minimal length of the sequence
 # which should be kept
-def cutadapt(filename, ext, site, seq_min_len):
+def cutadapt(filenames, ext, site, seq_min_len):
     import os
-    fname = filename
+    command = []
+    summary = []
+    for fname in filenames:
+        # Creating the folder rm_adapt, where all results will be saved
+        os.system('mkdir rm_adapt')
+        # Creating the corresponding folder for result storage
+        os.system('mkdir ./rm_adapt/' + fname)
+        # specifying the name of the trimmed reads
+        trim_name = './rm_adapt/' + fname + '/' + fname + '_trimmed.fastq'
+        # specifying the name of untrimmed reads
+        untr_name = './rm_adapt/' + fname + '/' + fname + '_untrimmed.fastq'
 
-    # Creating the folder rm_adapt, where all results will be saved
-    os.system('mkdir rm_adapt')
-    # Creating the corresponding folder for result storage
-    os.system('mkdir ./rm_adapt/' + fname)
-    # specifying the name of the trimmed reads
-    trim_name = './rm_adapt/' + fname + '/' + fname + '_trimmed.fastq'
-    # specifying the name of untrimmed reads
-    untr_name = './rm_adapt/' + fname + '/' + fname + '_untrimmed.fastq'
+        # Trimming the data
+        ##print('\n' + fname + ' processing.')
+        command.append('cutadapt -' + site + ' file:./adapters/' + fname + '_adapters.fasta' + ' -m ' +
+                  seq_min_len + ' --untrimmed-output ' + untr_name +
+                  ' -o ' + trim_name + ' ./' + fname + '.' + ext)
+        ##print(fname + ' finished')
 
-    # Trimming the data
-    print('\n' + fname + ' processing.')
-    os.system('cutadapt -' + site + ' file:./adapters/' + fname + '_adapters.fasta' + ' -m ' +
-              seq_min_len + ' --untrimmed-output ' + untr_name +
-              ' -o ' + trim_name + ' ./' + fname + '.' + ext)
-    print(fname + ' finished')
-
-    print('Packing the trimmed and untrimmed in a summary file.')
-    os.system('cat ./rm_adapt/' + fname + '/*.fastq >./rm_adapt/' +
-              fname + '/' + fname + '_processed.fastq')
-
+        ##print('Packing the trimmed and untrimmed in a summary file.')
+        summary.append('cat ./rm_adapt/' + fname + '/*.fastq >./rm_adapt/' +
+                  fname + '/' + fname + '_processed.fastq')
+    return(command, summary)
 
 # Running with the data, specified by filename and filepath, in bowtie2
 # The genome index for bowtie is stored unter bow_index

@@ -28,6 +28,8 @@ import datetime
 from multiprocessing.dummy import Pool as ThreadPool
 import itertools
 from threading import Thread
+import subprocess
+import time
 
 # Let the user specify the file-extension of the files to be processed
 
@@ -170,9 +172,21 @@ if exec_adapters in ['y', 'Y', 'yes']:
 Rseq.print_line()
 if exec_cutadapt in ['y', 'Y', 'yes']:
     print('Cutadapt started')
-    threads = [Thread(target = Rseq.cutadapt, args = (fname, ext, site, min_len)) for fname in fnames]
-    for t in threads: t.start()
-    for t in threads: t.join()
+    commands, summaries = Rseq.cutadapt(fnames, ext, site, min_len)
+    processes = []
+    for command in commands:
+        processes.append(subprocess.Popen(command, shell=True))
+    while 1:
+        status = []
+        status = [x.poll() for x in processes]
+        if None not in status:
+            break
+        else:
+            print(str(datetime.datetime.now().date()) + '\t' + str(datetime.datetime.now().time()) + ': Adapter removal running')
+            time.sleep(600)
+    # threads = [Thread(target = Rseq.cutadapt, args = (fname, ext, site, min_len)) for fname in fnames]
+    # for t in threads: t.start()
+    # for t in threads: t.join()
     print('Cutadapt done')
 
 # Running bowtie either on the trimmed reads....

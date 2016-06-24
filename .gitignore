@@ -17,3 +17,5 @@ testreads.fastq.gz
 *.gz
 
 *.log
+
+*.ipynb
