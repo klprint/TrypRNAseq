@@ -183,10 +183,17 @@ if exec_cutadapt in ['y', 'Y', 'yes']:
             break
         else:
             print(str(datetime.datetime.now().date()) + '\t' + str(datetime.datetime.now().time()) + ': Adapter removal running')
-            time.sleep(600)
-    # threads = [Thread(target = Rseq.cutadapt, args = (fname, ext, site, min_len)) for fname in fnames]
-    # for t in threads: t.start()
-    # for t in threads: t.join()
+            time.sleep(30)
+
+    processes = []
+    print('Summarizing Cutadapt Results')
+    for sum_cut in summaries:
+        processes.append(subprocess.Popen(sum_cut, shell=True))
+    while 1:
+        status = []
+        status = [x.poll() for x in processes]
+        if None not in status:
+            break
     print('Cutadapt done')
 
 # Running bowtie either on the trimmed reads....
