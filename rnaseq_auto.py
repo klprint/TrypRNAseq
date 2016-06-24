@@ -183,7 +183,7 @@ if exec_cutadapt in ['y', 'Y', 'yes']:
             break
         else:
             print(str(datetime.datetime.now().date()) + '\t' + str(datetime.datetime.now().time()) + ': Adapter removal running')
-            time.sleep(30)
+            time.sleep(60)
 
     processes = []
     print('Summarizing Cutadapt Results')

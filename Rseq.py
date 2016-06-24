@@ -83,7 +83,8 @@ def cutadapt(filenames, ext, site, seq_min_len):
     summary = []
     for fname in filenames:
         # Creating the folder rm_adapt, where all results will be saved
-        os.system('mkdir rm_adapt')
+        if not is_dir('rm_adapt'):
+            os.system('mkdir rm_adapt')
         # Creating the corresponding folder for result storage
         os.system('mkdir ./rm_adapt/' + fname)
         # specifying the name of the trimmed reads
@@ -109,7 +110,8 @@ def cutadapt(filenames, ext, site, seq_min_len):
 # eg. Tbgenome
 def bowtie(filename, filepath, bow_index, no_threads = '2'):
     import os
-    os.system('mkdir bowalign')
+    if not is_dir('bowalign'):
+        os.system('mkdir bowalign')
 
     # aligning the reads to the genome using bowtie
     # 4 threads (-p 4) are assigned to speed up alignment
@@ -124,8 +126,8 @@ def bowtie(filename, filepath, bow_index, no_threads = '2'):
 
 def sam_process(filename, filepath):
     import os
-
-    os.system('mkdir bam_files')
+    if not is_dir('bam_files'):
+        os.system('mkdir bam_files')
     os.system('samtools view -b -S ' + filepath +
               ' | samtools sort -m 2G -@ 4 - ./bam_files/' +
               filename + '_sorted')
@@ -174,14 +176,15 @@ def batch_cufflinks(ext, genome):
 
 def cds_only_counts(genome, SORTED_BAM, fname):
     import os
-    import sys
+    # import sys
 
-    os.system('mkdir reads')
+    if not is_dir('reads'):
+        os.system('mkdir reads')
     fout = './reads/'+fname + '_gene_read.txt'
 
     output_file = open(fout, 'a')
     gene_file = open(genome, "rU")
-    bam_file = open(SORTED_BAM, "rU")
+    #bam_file = open(SORTED_BAM, "rU")
     output_file.write("geneID\tGene_size\treads_count\n")
     while 1:
         line = gene_file.readline()
@@ -252,3 +255,13 @@ def gz_process(gz_file, ext):
     os.system('cp ' + gz_file + ' gzipped_reads\\')
     os.system('gzip -d ' + gz_file)
     os.system('mv ' + fname + '.' + second_ext + ' ' + fname + '.' + ext)
+
+def is_dir(dir_path):
+    import os
+
+    if os.path.isdir(dir_path):
+        present = True
+    else:
+        present = False
+
+    return(present)
