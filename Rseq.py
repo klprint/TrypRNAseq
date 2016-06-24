@@ -77,30 +77,32 @@ def make_ad_fasta(adapters_list, sample_name, no_adapters=80):
 # filename (w/o extension), the extension
 # the site used by the flag (-g/-a/-b) and the minimal length of the sequence
 # which should be kept
-def cutadapt(filename, ext, site, seq_min_len):
+def cutadapt(filenames, ext, site, seq_min_len):
     import os
-    fname = filename
+    command = []
+    summary = []
+    for fname in filenames:
+        # Creating the folder rm_adapt, where all results will be saved
+        if not is_dir('rm_adapt'):
+            os.system('mkdir rm_adapt')
+        # Creating the corresponding folder for result storage
+        os.system('mkdir ./rm_adapt/' + fname)
+        # specifying the name of the trimmed reads
+        trim_name = './rm_adapt/' + fname + '/' + fname + '_trimmed.fastq'
+        # specifying the name of untrimmed reads
+        untr_name = './rm_adapt/' + fname + '/' + fname + '_untrimmed.fastq'
 
-    # Creating the folder rm_adapt, where all results will be saved
-    os.system('mkdir rm_adapt')
-    # Creating the corresponding folder for result storage
-    os.system('mkdir ./rm_adapt/' + fname)
-    # specifying the name of the trimmed reads
-    trim_name = './rm_adapt/' + fname + '/' + fname + '_trimmed.fastq'
-    # specifying the name of untrimmed reads
-    untr_name = './rm_adapt/' + fname + '/' + fname + '_untrimmed.fastq'
+        # Trimming the data
+        ##print('\n' + fname + ' processing.')
+        command.append('cutadapt -' + site + ' file:./adapters/' + fname + '_adapters.fasta' + ' -m ' +
+                  seq_min_len + ' --untrimmed-output ' + untr_name +
+                  ' -o ' + trim_name + ' ./' + fname + '.' + ext)
+        ##print(fname + ' finished')
 
-    # Trimming the data
-    print '\n' + fname + ' processing.'
-    os.system('cutadapt -' + site + ' file:./adapters/' + fname + '_adapters.fasta' + ' -m ' +
-              seq_min_len + ' --untrimmed-output ' + untr_name +
-              ' -o ' + trim_name + ' ./' + fname + '.' + ext)
-    print fname + ' finished'
-
-    print 'Packing the trimmed and untrimmed in a summary file.'
-    os.system('cat ./rm_adapt/' + fname + '/*.fastq >./rm_adapt/' +
-              fname + '/' + fname + '_processed.fastq')
-
+        ##print('Packing the trimmed and untrimmed in a summary file.')
+        summary.append('cat ./rm_adapt/' + fname + '/*.fastq >./rm_adapt/' +
+                  fname + '/' + fname + '_processed.fastq')
+    return(command, summary)
 
 # Running with the data, specified by filename and filepath, in bowtie2
 # The genome index for bowtie is stored unter bow_index
@@ -108,7 +110,8 @@ def cutadapt(filename, ext, site, seq_min_len):
 # eg. Tbgenome
 def bowtie(filename, filepath, bow_index, no_threads = '2'):
     import os
-    os.system('mkdir bowalign')
+    if not is_dir('bowalign'):
+        os.system('mkdir bowalign')
 
     # aligning the reads to the genome using bowtie
     # 4 threads (-p 4) are assigned to speed up alignment
@@ -123,8 +126,8 @@ def bowtie(filename, filepath, bow_index, no_threads = '2'):
 
 def sam_process(filename, filepath):
     import os
-
-    os.system('mkdir bam_files')
+    if not is_dir('bam_files'):
+        os.system('mkdir bam_files')
     os.system('samtools view -b -S ' + filepath +
               ' | samtools sort -m 2G -@ 4 - ./bam_files/' +
               filename + '_sorted')
@@ -142,7 +145,7 @@ def check_dir():
     user_dir = raw_input('Please specify the location of the raw-files: ')
 
     while not os.path.isdir(user_dir):
-        print 'This directory does not exist, or the path points to a file!'
+        print('This directory does not exist, or the path points to a file!')
         user_dir = raw_input('Please specify the correct path: ')
 
     return user_dir
@@ -167,20 +170,21 @@ def batch_cufflinks(ext, genome):
         fname = fname[1:]
         fpath = './bam_files/' + fname + '_sorted.bam'
 
-        print 'Using cufflinks for read counting: \n'
+        print('Using cufflinks for read counting: \n')
         Rseq.cufflinks(fpath, genome, fname)
 
 
 def cds_only_counts(genome, SORTED_BAM, fname):
     import os
-    import sys
+    # import sys
 
-    os.system('mkdir reads')
+    if not is_dir('reads'):
+        os.system('mkdir reads')
     fout = './reads/'+fname + '_gene_read.txt'
 
     output_file = open(fout, 'a')
     gene_file = open(genome, "rU")
-    bam_file = open(SORTED_BAM, "rU")
+    #bam_file = open(SORTED_BAM, "rU")
     output_file.write("geneID\tGene_size\treads_count\n")
     while 1:
         line = gene_file.readline()
@@ -241,3 +245,23 @@ def terminal_size():
 def print_line():
     tw, th = terminal_size()
     print(tw * '-')
+
+
+def gz_process(gz_file, ext):
+    import os
+    fname = gz_file.split('.')[1]
+    fname = fname[1:]
+    second_ext = gz_file.split('.')[-2]
+    os.system('cp ' + gz_file + ' gzipped_reads\\')
+    os.system('gzip -d ' + gz_file)
+    os.system('mv ' + fname + '.' + second_ext + ' ' + fname + '.' + ext)
+
+def is_dir(dir_path):
+    import os
+
+    if os.path.isdir(dir_path):
+        present = True
+    else:
+        present = False
+
+    return(present)
