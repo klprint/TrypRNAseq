@@ -17,14 +17,14 @@ In the following, the usage of TrypRNAseq is described:
 
 1. Download the latest [version](https://github.com/klprint/TrypRNAseq/releases)
 2. Add the files containing the reads (can be gzipped, NO tarballs, make sure all have the same extension)
-3. Start the pipeline using: python3 rnaseq_auto.py
+3. Start the pipeline using: __python3__ rnaseq_auto.py
 4. Follow the instructions prompted in the terminal
 5. If alignment against _Trypanosoma brucei_ TREU927 genome is intended, the included bowtie2 index can be used
 6. If read counting should be done, using the coding sequences of the genes, the delivered GTF file (Tb_cds.gtf) can be used
 7. After the pipeline finished, the folder with tab separated read counts will open automatically
 8. For data analysis take care, that some genes are annotated by TrypDB with two, or more, CDS, therefore sum all reads up, originating in the same geneID
 
-Now you can choose between default or user specified settings. Default settings are:
+The default settings are:
 
 ```
 Default-parameters: 
@@ -34,6 +34,9 @@ Default-parameters:
    - Keep a minimal length of 30bp/read, discard all shorter 
    - Number of threads = Will be asked for
 ```
+
+__Attention__  
+Be careful that you have enough storage capacity, since the pipeline stores intermediate files (that you can review the process afterwards). This means, you should provide at least 400GB of storage (high estimation, depending on your raw read-files' size).
 
 ## Licence
 This pipeline was created by Kevin Leiss of the [Clayton lab](http://www.zmbh.uni-heidelberg.de/clayton/default.shtml) (ZMBH, Centre for Molecular Biology Heidelberg, Germany).
