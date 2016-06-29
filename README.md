@@ -12,6 +12,12 @@ All dependencies need to be reachable via the command line.
 - [Cutadapt version 1.7.1](https://cutadapt.readthedocs.io/en/stable/)
 - [bowtie2 version 2.0.0-beta7](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
 
+## Workflow
+The Illumina sequencing results are fed into the pipeline either as .fastq or .gz file. If the reads are gzipped, they will be extracted and saved as fastq (fasta files are also possible, but not recommeneded, since no information about the quality is saved). The user specifies whether the input is given to FastQC for quality control and if the found overrepresented sequences (mostly Illumina adapters and rRNA reads) should be removed by cutadapt. The generated files are aligned to the user-provided genome as a bowtie2 index. Bowtie2 generates .sam files and for each sequencing file a .log file. The .log file can be reviewed – it contains informations about the time needed for alignment and the alignment itself (how many reads aligned / once / more than once?). The sam file is converted into binary .bam files by samtools and an index (.bai) for each .bam file is generated. Besides, the pipeline directly sorts the .bam files' content for user review using for example [Artemis](http://www.sanger.ac.uk/science/tools/artemis). In the end, a python script uses samtools and the user-provided gene annotation file (.gtf) to count the reads for each annotated gene (region, depending on the .gtf file).
+
+![](Figures/workflow.png)
+__Figure 1__: Flow of the TrypRNAseq pipeline. Rhomboids represent user influenceable decissions, rectangles files and ellipses commands and tools. Data, which the user needs to supply are shown in bold rectangles. O.S. = Overrepresented sequences as found by FastQC (sequences which make up more than 1% of all reads).
+
 ## Usage
 In the following, the usage of TrypRNAseq is described:
 
