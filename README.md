@@ -1,3 +1,4 @@
+
 # TrypRNAseq
 The TrypRNAseq pipeline is designed to take raw Illumina reads, does quality control, removal of overrepresented sequences and alignes the processed reads to a genome. In the end it counts the reads to a user-supplied .gtf file and produces a tab-sepparated file summarizing its results. Users should only specify in the beginning parameters which are asked for in a command-line dialogue.
 
@@ -40,6 +41,22 @@ Default-parameters:
    - Keep a minimal length of 30bp/read, discard all shorter 
    - Number of threads = Will be asked for
 ```
+
+## Pipeline output
+The pipeline produces different folders, containing individual steps. All intermediate files are saved by default, so users can review each step after the pipeline finished. The following summarizes the folders and their content.
+
+Folder          |Content
+:------         |:-------
+gzipped\_reads  |If the reads file is gzipped in the beginning, the original .gz files will be copied here.
+fqc\_result     |Output of the FastQC quality control.
+adapters        |.fasta files of the identified overrepresented sequences. These sequences are used by cutadapt for adapter removal.
+rm_adapt        |Output of cutadapt. For each sequencing file, one folder is created. Each contains 3 Files: X\_trimmed.X / X\_untrimmed.X / X\_processed.X. The latter contains the summary of both previous files: Trimmed and untrimmed sequences and is used by bowtie2 for read alignment.
+bowalign        |Bowtie2 output folder, containing the alignment .sam files and a .log file for each input. The log saves bowtie2's statistics
+bam_files       |Samtools output, containing .bam and corresponding index files (.bai).
+__reads__       |Storage of the final read-counting. Each input file gets a separate tab-sepparated output file.
+---------------------------------
+
+
 
 __Attention__  
 Be careful that you have enough storage capacity, since the pipeline stores intermediate files (that you can review the process afterwards). This means, you should provide at least 400GB of storage (high estimation, depending on your raw read-files' size).
