@@ -30,7 +30,7 @@ In the following, the usage of TrypRNAseq is described. It is to be noted that t
 
 1. Download the latest [version](https://github.com/klprint/TrypRNAseq/releases)
 2. Add the files containing the reads (can be gzipped, NO tarballs, make sure all have the same extension)
-3. Start the pipeline using: __python3__ rnaseq_auto.py
+3. Start the pipeline using: __python3__ tryprnaseq.py
 4. Follow the instructions prompted in the terminal
 5. If alignment against _Trypanosoma brucei_ TREU927 genome is intended, the included bowtie2 index can be used
 6. If read counting should be done, using the coding sequences of the genes, the delivered GTF file (Tb_cds.gtf) can be used
