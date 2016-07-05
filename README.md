@@ -2,11 +2,11 @@
 # TrypRNAseq
 The TrypRNAseq pipeline is designed to take raw Illumina reads, does quality control, removal of overrepresented sequences and alignes the processed reads to a genome. In the end it counts the reads to a user-supplied .gtf file and produces a tab-sepparated file summarizing its results. Users should only specify in the beginning parameters which are asked for in a command-line dialogue.
 
-## Information
+# Information
 - This code is still pre-alpha and is now under construction and cleanup!
 - Till now, all reads will be aligned via bowtie2 up to 20-times (-k 20); in future releases this might be changed
 
-## Dependencies
+# Dependencies
 All dependencies need to be reachable via the command line.
 
 - __Python version 3__
@@ -14,8 +14,10 @@ All dependencies need to be reachable via the command line.
 - [Cutadapt version 1.7.1](https://cutadapt.readthedocs.io/en/stable/)
 - [bowtie2 version 2.0.0-beta7](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
 
-## Workflow
+# Workflow
 ![Flow of the TrypRNAseq pipeline. Rhomboids represent user influenceable decissions, rectangles files and ellipses commands and tools. Data, which the user needs to supply are shown in bold rectangles. O.S. = Overrepresented sequences as found by FastQC (sequences which make up more than 1% of all reads).](Figures/workflow.png)
+
+
 __Figure 1__: Flow of the TrypRNAseq pipeline. Rhomboids represent user influenceable decissions, rectangles files and ellipses commands and tools. Data, which the user needs to supply are shown in bold rectangles. O.S. = Overrepresented sequences as found by FastQC (sequences which make up more than 1% of all reads
 
 
@@ -23,7 +25,7 @@ The Illumina sequencing results are fed into the pipeline either as .fastq or .g
 
 
 
-## Usage
+# Usage
 In the following, the usage of TrypRNAseq is described. It is to be noted that till now, TrypRNAseq does not support paired end reads. This feature might be implemented in later versions.
 
 1. Download the latest [version](https://github.com/klprint/TrypRNAseq/releases)
@@ -46,7 +48,7 @@ Default-parameters:
    - Number of threads = Will be asked for
 ```
 
-## Programm parameters
+# Programm parameters
 The TrypRNAseq pipeline uses different tools to process high throughput sequencing results and counting of the reads for specified parts of the genome (i.e. genes pr CDSs). All tools come with a variety of specific options and default parameters. Careful consideration of the settings nee to be done, to prevent wrong data processing.
 
 Tool                 | Settings
@@ -60,7 +62,7 @@ read counting script | reads in .gtf stored locations and uses samtools view to 
 
 __Table 1__: Used tools and corresponding settings. _user specified_ = These parameters are specified by the user in the starting dialogue.
 
-## Pipeline output
+# Pipeline output
 The pipeline produces different folders, containing individual steps. All intermediate files are saved by default, so users can review each step after the pipeline finished. The following summarizes the folders and their content.
 
 Folder          |Content
@@ -76,10 +78,10 @@ __reads__       |Storage of the final read-counting. Each input file gets a sepa
 __Table 2__: Description of folders being created by TrypRNAseq pipeline.
 
 
-## Attention
+# Attention
 Be careful that you have enough storage capacity, since the pipeline stores intermediate files (that you can review the process afterwards). This means, you should provide at least 400GB of storage (high estimation, depending on your raw read-files' size).
 
-## Licence
+# Licence
 This pipeline was created by Kevin Leiss of the [Clayton lab](http://www.zmbh.uni-heidelberg.de/clayton/default.shtml) (ZMBH, Centre for Molecular Biology Heidelberg, Germany). Individual parts are developed by Clementine Merce and Elisha Muchunga.
 
 
