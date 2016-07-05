@@ -265,3 +265,37 @@ def is_dir(dir_path):
         present = False
 
     return(present)
+
+def read_reads(fpath):
+    reads_file = {}
+    with open(fpath, 'r') as filehandle:
+        skip_first = filehandle.readline()
+        for line in filehandle:
+            line = line.rstrip()
+            geneID, gene_size, gene_count = line.split('\t')
+
+            if geneID in reads_file.keys():
+                g_count = reads_file[geneID]
+                g_count = str( int(g_count) + int(gene_count))
+                reads_file[geneID] = g_count
+            else:
+                reads_file[geneID] = gene_count
+    return(reads_file)
+
+
+def create_reads_table(reads_dicts, folder):
+    with open('./' + folder + '/reads_matrix.txt', 'w') as fout:
+        first_sample = list(reads_dicts.keys())[1]
+        geneIDs = list(reads_dicts[first_sample].keys()) # fixes order of IDs
+        samples = list(reads_dicts.keys()) # fixes order of samples
+        fout.write('GeneID' + '\t' + '\t'.join(samples) + '\n')
+        for ID in geneIDs:
+            fout.write(ID + '\t')
+            for sample in samples:
+                fout.write(reads_dicts[sample][ID])
+                if sample == samples[-1]:
+                    fout.write('\n')
+                else:
+                    fout.write('\t')
+
+

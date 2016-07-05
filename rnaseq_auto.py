@@ -183,7 +183,7 @@ if exec_cutadapt in ['y', 'Y', 'yes']:
             break
         else:
             print(str(datetime.datetime.now().date()) + '\t' + str(datetime.datetime.now().time()) + ': Adapter removal running')
-            time.sleep(300)
+            time.sleep(5)
 
     processes = []
     print('Summarizing Cutadapt Results')
@@ -245,6 +245,10 @@ pool = ThreadPool(int(thread_no))
 pool.starmap(Rseq.cds_only_counts, zip(itertools.repeat(genome_gtf), fpaths, fnames))
 pool.close()
 pool.join()
+
+
+
+
 
 settingslog.write('\n\nPipeline finished at:\t' + str(datetime.datetime.now().date()) + '\t' + str(datetime.datetime.now().time()))
 print(3*'\n')

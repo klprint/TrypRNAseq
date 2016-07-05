@@ -21,3 +21,5 @@ testreads.fastq.gz
 *.ipynb
 
 *.html
+
+test_read_matrix.py
