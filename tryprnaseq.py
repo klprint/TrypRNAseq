@@ -1,5 +1,5 @@
 #############################################################
-#                       RNAseq_auto                         #
+#                       TrypRNAseq                          #
 #          Automatic RNAseq raw file processing             #
 #############################################################
 #               created by Kevin Leiss                      #
