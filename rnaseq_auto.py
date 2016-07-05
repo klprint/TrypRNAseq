@@ -240,13 +240,19 @@ for fname in fnames:
 fpaths = []
 for fname in fnames:
     fpaths.append('./bam_files/' + fname + '_sorted.bam')
-print(fpaths)
 pool = ThreadPool(int(thread_no))
 pool.starmap(Rseq.cds_only_counts, zip(itertools.repeat(genome_gtf), fpaths, fnames))
 pool.close()
 pool.join()
 
+# Summarizing the generated read counts into one table
+fpath = ''
+reads_dicts = {}
+for fname in fnames:
+    fpath = './reads/' + fname + '_gene_read.txt'
+    reads_dicts[fname] = Rseq.read_reads(fpath)
 
+Rseq.create_reads_table(reads_dicts, 'reads')
 
 
 
