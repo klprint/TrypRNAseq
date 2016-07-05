@@ -8,19 +8,21 @@ The TrypRNAseq pipeline is designed to take raw Illumina reads, does quality con
 
 ## Dependencies
 All dependencies need to be reachable via the command line.
+
 - __Python version 3__
 - [FastQC v0.11.5](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 - [Cutadapt version 1.7.1](https://cutadapt.readthedocs.io/en/stable/)
 - [bowtie2 version 2.0.0-beta7](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
 
 ## Workflow
+![Flow of the TrypRNAseq pipeline. Rhomboids represent user influenceable decissions, rectangles files and ellipses commands and tools. Data, which the user needs to supply are shown in bold rectangles. O.S. = Overrepresented sequences as found by FastQC (sequences which make up more than 1% of all reads).](Figures/workflow.png)
+
 The Illumina sequencing results are fed into the pipeline either as .fastq or .gz file. If the reads are gzipped, they will be extracted and saved as fastq (fasta files are also possible, but not recommeneded, since no information about the quality is saved). The user specifies whether the input is given to FastQC for quality control and if the found overrepresented sequences (mostly Illumina adapters and rRNA reads) should be removed by cutadapt. The generated files are aligned to the user-provided genome as a bowtie2 index. Bowtie2 generates .sam files and for each sequencing file a .log file. The .log file can be reviewed – it contains informations about the time needed for alignment and the alignment itself (how many reads aligned / once / more than once?). The sam file is converted into binary .bam files by samtools and an index (.bai) for each .bam file is generated. Besides, the pipeline directly sorts the .bam files' content for user review using for example [Artemis](http://www.sanger.ac.uk/science/tools/artemis). In the end, a python script uses samtools and the user-provided gene annotation file (.gtf) to count the reads for each annotated gene (region, depending on the .gtf file).
 
-![](Figures/workflow.png)
-__Figure 1__: Flow of the TrypRNAseq pipeline. Rhomboids represent user influenceable decissions, rectangles files and ellipses commands and tools. Data, which the user needs to supply are shown in bold rectangles. O.S. = Overrepresented sequences as found by FastQC (sequences which make up more than 1% of all reads).
+
 
 ## Usage
-In the following, the usage of TrypRNAseq is described:
+In the following, the usage of TrypRNAseq is described. It is to be noted that till now, TrypRNAseq does not support paired end reads. This feature might be implemented in later versions.
 
 1. Download the latest [version](https://github.com/klprint/TrypRNAseq/releases)
 2. Add the files containing the reads (can be gzipped, NO tarballs, make sure all have the same extension)
@@ -42,11 +44,25 @@ Default-parameters:
    - Number of threads = Will be asked for
 ```
 
+## Programm parameters
+The TrypRNAseq pipeline uses different tools to process high throughput sequencing results and counting of the reads for specified parts of the genome (i.e. genes pr CDSs). All tools come with a variety of specific options and default parameters. Careful consideration of the settings nee to be done, to prevent wrong data processing.
+
+Tool                 | Settings
+:--------------------|:-------------------------------------------------------------------
+cutadapt             | -a/-g/-b (_user specified_), minimal kept length (_user specified_)
+bowtie2              | -k 20 (align each read up to 20 times), -x (_user specified genome index_), -t (print wall-clock time), -S (input sam-files, pipeline generated), StdOut saved into .log files
+samtools view        | -b (generate .bam files), -S (read in .sam files)
+samtools sort        | -m 2G (Use up to 2GB of RAM), -@ thread_number (_user specified_)
+samtools index       | default paramters, indexes the generated .bam files
+read counting script | reads in .gtf stored locations and uses samtools view to count the number of reads for each segment
+
+Table: Used tools and corresponding settings. _user specified_ = These parameters are specified by the user in the starting dialogue.
+
 ## Pipeline output
 The pipeline produces different folders, containing individual steps. All intermediate files are saved by default, so users can review each step after the pipeline finished. The following summarizes the folders and their content.
 
 Folder          |Content
-:------         |:-------
+:---------------|:-------------------------------------------------------------------------
 gzipped\_reads  |If the reads file is gzipped in the beginning, the original .gz files will be copied here.
 fqc\_result     |Output of the FastQC quality control.
 adapters        |.fasta files of the identified overrepresented sequences. These sequences are used by cutadapt for adapter removal.
@@ -54,11 +70,11 @@ rm_adapt        |Output of cutadapt. For each sequencing file, one folder is cre
 bowalign        |Bowtie2 output folder, containing the alignment .sam files and a .log file for each input. The log saves bowtie2's statistics
 bam_files       |Samtools output, containing .bam and corresponding index files (.bai).
 __reads__       |Storage of the final read-counting. Each input file gets a separate tab-sepparated output file.
----------------------------------
+
+Table: Description of folders being created by TrypRNAseq pipeline.
 
 
-
-__Attention__  
+## Attention
 Be careful that you have enough storage capacity, since the pipeline stores intermediate files (that you can review the process afterwards). This means, you should provide at least 400GB of storage (high estimation, depending on your raw read-files' size).
 
 ## Licence

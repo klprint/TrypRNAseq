@@ -221,7 +221,7 @@ for fname in fnames:
     fpath = './bowalign/' + fname + '_bow.sam'
     Rseq.print_line()
     print('\n\nPreparing the BAM files out of SAM files for \n' + fname)
-    Rseq.sam_process(filename=fname, filepath=fpath)
+    Rseq.sam_process(filename=fname, filepath=fpath, no_threads = thread_no)
 
 
 for fname in fnames:

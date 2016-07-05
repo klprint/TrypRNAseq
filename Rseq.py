@@ -124,12 +124,12 @@ def bowtie(filename, filepath, bow_index, no_threads = '2'):
               '_bow.sam 2> ./bowalign/' + filename + '_log.txt')
 
 
-def sam_process(filename, filepath):
+def sam_process(filename, filepath, no_threads):
     import os
     if not is_dir('bam_files'):
         os.system('mkdir bam_files')
     os.system('samtools view -b -S ' + filepath +
-              ' | samtools sort -m 2G -@ 4 - ./bam_files/' +
+              ' | samtools sort -m 2G -@ '+ no_threads +' - ./bam_files/' +
               filename + '_sorted')
 
 
