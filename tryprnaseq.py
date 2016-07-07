@@ -209,7 +209,7 @@ if exec_cutadapt in ['y', 'Y', 'yes']:
 else:
     for fname in fnames:
         fname_ext = fname + '.' + ext
-        fpath = './' + fname + '.' + fname_ext
+        fpath = './' + fname_ext
 
         # Here bowtie is started using the raw data, if no adapter removal was
         # done
