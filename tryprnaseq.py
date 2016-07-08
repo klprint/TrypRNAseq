@@ -30,51 +30,9 @@ import itertools
 from threading import Thread
 import subprocess
 import time
-from optparse import OptionParser
+#from optparse import OptionParser
 
-parser = OptionParser()
-parser.add_option('-i', '--extension',
-    help = 'defines read files extension without \'.\' [fastq]')
-
-parser.add_option('-u', '--ext-unzip',
-    help = 'file-extension after unzipping. Only required, if -ext = gz [fastq]',
-    default = 'fastq')
-
-parser.add_option('-x', '--bow-index',
-    help = 'bowtie2 index path with prefix (eg. \'bowtieindex/TbGenome\')',
-    default = 'bowtieindex/TbGenome')
-
-parser.add_option('-g', '--gtf',
-    help = 'gtf file path for read count',
-    default = 'Tb_cds.gtf')
-
-parser.add_option('-a', '--remove-adapters',
-    action = 'store_true',
-    help = 'should identified adapters be removed?',
-    default = True)
-
-parser.add_option('-q', '--fastqc',
-    action = 'store_true',
-    help = 'analyse raw files with FastQC',
-    default = True)
-
-parser.add_option('-s', '--adapter-site',
-    default = 'b',
-    help = 'defines the site where adapters are expected (3(a), 5(g) or both possible(b))')
-
-parser.add_option('-l', '--min-length',
-    default = '30',
-    help = 'minimal read length, being kept after adapter removal')
-
-parser.add_option('--max-adapters',
-    default = 'all',
-    help = 'number of adapters which should be removed')
-
-parser.add_option('-t', '--threads',
-    default = '4',
-    help = 'number of threads')
-
-(options, args) = parser.parse_args()
+options = Rseq.terminal_options()
 
 if options.extension in ['fastq', 'fasta', 'gz']:
     ext = options.extension
