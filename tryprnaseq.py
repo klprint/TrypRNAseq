@@ -39,16 +39,14 @@ if options.extension in ['fastq', 'fasta', 'gz']:
     bow_indx = options.bow_index
     genome_gtf = options.gtf
     thread_no = options.threads
+    exec_adapters = options.fastqc
 
-    if options.fastqc:
+    exec_cutadapt = options.remove_adapters
+
+    if(exec_cutadapt == 'y' and exec_adapters == 'n'):
         exec_adapters = 'y'
-    else:
-        exec_adapters = 'n'
+        print('\n\nCutadapt without FastQC not possible FastQC will be executed')
 
-    if options.remove_adapters:
-        exec_cutadapt = 'y'
-    else:
-        exec_cutadapt = 'n'
 
     site = options.adapter_site
     min_len = options.min_length

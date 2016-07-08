@@ -318,28 +318,14 @@ def terminal_options():
         default = 'Tb_cds.gtf')
 
     parser.add_option('-a', '--remove-adapters',
-        action = 'store_true',
-        help = 'should identified adapters be removed?',
+        help = 'should identified adapters be removed? [y/n]',
         dest = 'remove_adapters',
-        default = True)
-
-    parser.add_option('-r', '--dont-remove',
-        action = 'store_false',
-        help = 'dont remove adapters',
-        dest = 'remove_adapters',
-        default = True)
+        default = 'y')
 
     parser.add_option('-q', '--fastqc',
-        action = 'store_true',
-        help = 'analyse raw files with FastQC',
+        help = 'analyse raw files with FastQC [y/n]',
         dest = 'fastqc',
-        default = True)
-
-    parser.add_option('--no-fastqc',
-        action = 'store_false',
-        help = 'do no quality control with FastQC',
-        dest = 'fastqc',
-        default = True)
+        default = 'y')
 
     parser.add_option('-s', '--adapter-site',
         default = 'b',
