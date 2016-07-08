@@ -30,92 +30,170 @@ import itertools
 from threading import Thread
 import subprocess
 import time
+from optparse import OptionParser
 
-# Let the user specify the file-extension of the files to be processed
+parser = OptionParser()
+parser.add_option('-i', '--extension',
+    help = 'defines read files extension without \'.\' [fastq]')
 
-ext = input('\nSpecify file extension of the raw-data (without \'.\', last extension [ie. txt.gz --> gz]): ')
-# Check whether the file extension is fastq or fasta.
-# This is important to prevent cutadapt from
-# prompting an error.
-while ext not in ['fastq', 'fasta', 'gz']:
-    print('Please rename your reads to the right file-extension [gz (if compressed), fastq or fasta]')
-    ext = input('Specify file extension: ')
+parser.add_option('-u', '--ext-unzip',
+    help = 'file-extension after unzipping. Only required, if -ext = gz [fastq]',
+    default = 'fastq')
 
-# Identifying the files with the previously given file extension:
-files = glob.glob('./*.' + ext)
-# Generating a list of to be processed filenames:
-fnames = []
-for f in files:
-    fname = f.split('.')[1]
-    fname = fname[1:]
-    fnames.append(fname)
+parser.add_option('-x', '--bow-index',
+    help = 'bowtie2 index path with prefix (eg. \'bowtieindex/TbGenome\')',
+    default = 'bowtieindex/TbGenome')
 
+parser.add_option('-g', '--gtf',
+    help = 'gtf file path for read count',
+    default = 'Tb_cds.gtf')
 
-Rseq.print_line()
-# Checking whether files are present with the specified extension
-while len(fnames) == 0:
-    print('\n\nFiles can not be found, make sure you used the correct file-extension.')
-    ext = input('File extension [gz, fasta, fastq]: ')
+parser.add_option('-a', '--remove-adapters',
+    action = 'store_true',
+    help = 'should identified adapters be removed?',
+    default = True)
+
+parser.add_option('-q', '--fastqc',
+    action = 'store_true',
+    help = 'analyse raw files with FastQC',
+    default = True)
+
+parser.add_option('-s', '--adapter-site',
+    default = 'b',
+    help = 'defines the site where adapters are expected (3(a), 5(g) or both possible(b))')
+
+parser.add_option('-l', '--min-length',
+    default = '30',
+    help = 'minimal read length, being kept after adapter removal')
+
+parser.add_option('--max-adapters',
+    default = 'all',
+    help = 'number of adapters which should be removed')
+
+parser.add_option('-t', '--threads',
+    default = '4',
+    help = 'number of threads')
+
+(options, args) = parser.parse_args()
+
+if options.extension in ['fastq', 'fasta', 'gz']:
+    ext = options.extension
+    bow_indx = options.bow_index
+    genome_gtf = options.gtf
+    thread_no = options.threads
+
+    if options.fastqc:
+        exec_adapters = 'y'
+    else:
+        exec_adapters = 'n'
+
+    if options.remove_adapters:
+        exec_cutadapt = 'y'
+    else:
+        exec_cutadapt = 'n'
+
+    site = options.adapter_site
+    min_len = options.min_length
+    adap_max = options.max_adapters
+    
     files = glob.glob('./*.' + ext)
+    # Generating a list of to be processed filenames:
     fnames = []
     for f in files:
         fname = f.split('.')[1]
         fname = fname[1:]
         fnames.append(fname)
 
-# Ask if default parameters should be used
-print(('\n\nDefault-parameters: \n'
-    '- Provided Bowtie Tryp. index \n'
-    '- Provided .gtf file for read count \n'
-    '- Remove all found adapters on both sides \n'
-    '- Keep a minimal length of 30bp/read, discard all shorter \n'
-    '- Number of threads = Will be asked for'))
 
-exec_default = input('Should the pipeline be executed with default parameters? y/n :')
-thread_no = input('How many numbers of threads should be used?: ')
+    Rseq.print_line()
 
-
-if exec_default in ['y', 'yes', 'Y']:
-    bow_indx = 'bowtieindex/TbGenome'
-    genome_gtf = 'Tb_cds.gtf'
-    exec_adapters = 'y'
-    exec_cutadapt = 'y'
-    site = 'b'
-    min_len = '30'
-    adap_max = 'all'
-
-# If not, let the user specify the parameters
 else:
 
-    # Getting the bowtie2 index file
-    bow_indx = input(
-        'Please enter the path and the prefix (eg. Tbgenome) to your bowtie genome index: ')
+    # Let the user specify the file-extension of the files to be processed
+    ext = input('\nSpecify file extension of the raw-data (without \'.\', last extension [ie. txt.gz --> gz]): ')
+    # Check whether the file extension is fastq or fasta.
+    # This is important to prevent cutadapt from
+    # prompting an error.
+    while ext not in ['fastq', 'fasta', 'gz']:
+        print('Please rename your reads to the right file-extension [gz (if compressed), fastq or fasta]')
+        ext = input('Specify file extension: ')
 
-    # Getting the gtf file for read counting
-    genome_gtf = input('Path to genome gtf file: ')
+    # Identifying the files with the previously given file extension:
+    files = glob.glob('./*.' + ext)
+    # Generating a list of to be processed filenames:
+    fnames = []
+    for f in files:
+        fname = f.split('.')[1]
+        fname = fname[1:]
+        fnames.append(fname)
 
 
-    # Getting informations on how the data should be processed
-    # If only the quality control of FastQC should be used,
-    # but another list of adapters be removed, place a fasta file
-    # with the adapters in the subfolder 'adapters'.
-    # The file should have the same name as the file beeing processed with the extension:
-    # _adapters.fasta
-    exec_adapters = input(
-        '\nShould a list of adapters be produced by FastQC? y/n: ')
-    exec_cutadapt = input('\nShould the adapters be removed? y/n: ')
+    Rseq.print_line()
+    # Checking whether files are present with the specified extension
+    while len(fnames) == 0:
+        print('\n\nFiles can not be found, make sure you used the correct file-extension.')
+        ext = input('File extension [gz, fasta, fastq]: ')
+        files = glob.glob('./*.' + ext)
+        fnames = []
+        for f in files:
+            fname = f.split('.')[1]
+            fname = fname[1:]
+            fnames.append(fname)
 
-    if exec_cutadapt == 'y':
-        if not os.path.exists('./adapters'):
-            print('\n\nThe adapters-folder does not exist! Adapters will be generated...')
-            exec_adapters = 'y'
 
-        site = input(
-            'Where are the adapters located? 3(a), 5(g) or both possible(b): ')
-        min_len = input(
-            'What is the minimal sequence length which should be kept?: ')
-        adap_max = input(
-            'How many adapters should be used for removal (the more the longer it takes)[int OR all]: ')
+    # Ask if default parameters should be used
+    print(('\n\nDefault-parameters: \n'
+        '- Provided Bowtie Tryp. index \n'
+        '- Provided .gtf file for read count \n'
+        '- Remove all found adapters on both sides \n'
+        '- Keep a minimal length of 30bp/read, discard all shorter \n'
+        '- Number of threads = Will be asked for'))
+
+    exec_default = input('Should the pipeline be executed with default parameters? y/n :')
+    thread_no = input('How many numbers of threads should be used?: ')
+
+
+    if exec_default in ['y', 'yes', 'Y']:
+        bow_indx = 'bowtieindex/TbGenome'
+        genome_gtf = 'Tb_cds.gtf'
+        exec_adapters = 'y'
+        exec_cutadapt = 'y'
+        site = 'b'
+        min_len = '30'
+        adap_max = 'all'
+
+# If not, let the user specify the parameters
+    else:
+
+        # Getting the bowtie2 index file
+        bow_indx = input(
+            'Please enter the path and the prefix (eg. Tbgenome) to your bowtie genome index: ')
+
+        # Getting the gtf file for read counting
+        genome_gtf = input('Path to genome gtf file: ')
+
+
+        # Getting informations on how the data should be processed
+        # If only the quality control of FastQC should be used,
+        # but another list of adapters be removed, place a fasta file
+        # with the adapters in the subfolder 'adapters'.
+        # The file should have the same name as the file beeing processed with the extension:
+        # _adapters.fasta
+        exec_adapters = input(
+            '\nShould a list of adapters be produced by FastQC? y/n: ')
+        exec_cutadapt = input('\nShould the adapters be removed? y/n: ')
+
+        if exec_cutadapt == 'y':
+            if not os.path.exists('./adapters'):
+                print('\n\nThe adapters-folder does not exist! Adapters will be generated...')
+                exec_adapters = 'y'
+
+            site = input(
+                'Where are the adapters located? 3(a), 5(g) or both possible(b): ')
+            min_len = input(
+                'What is the minimal sequence length which should be kept?: ')
+            adap_max = input(
+                'How many adapters should be used for removal (the more the longer it takes)[int OR all]: ')
 
 
 # Creating a log-file
@@ -132,16 +210,27 @@ settingslog.write('-----TrypRNAseq-----\n'
 
 Rseq.print_line()
 # Unzipping gzipped files and adding correct extension
-if ext == 'gz':
-    os.system('mkdir gzipped_reads')
-    print('\nYour files are compressed. They will be decompressed.')
-    ext = input('Please specify the file extension of the decompressed file [fasta, fastq]: ')
-    # Parallelized extraction and copying
-    print('Extracting files')
-    pool = ThreadPool(int(thread_no))
-    pool.starmap(Rseq.gz_process, zip(files, itertools.repeat(ext)))
-    pool.close()
-    pool.join()
+if options.extension in ['fastq', 'fasta', 'gz']:
+    if ext == 'gz':
+        os.system('mkdir gzipped_reads')
+        print('\nYour files are compressed. They will be decompressed.')
+        print('Extracting files')
+        ext = options.ext_unzip
+        pool = ThreadPool(int(thread_no))
+        pool.starmap(Rseq.gz_process, zip(files, itertools.repeat(ext)))
+        pool.close()
+        pool.join()
+else:
+    if ext == 'gz':
+        os.system('mkdir gzipped_reads')
+        print('\nYour files are compressed. They will be decompressed.')
+        ext = input('Please specify the file extension of the decompressed file [fasta, fastq]: ')
+        # Parallelized extraction and copying
+        print('Extracting files')
+        pool = ThreadPool(int(thread_no))
+        pool.starmap(Rseq.gz_process, zip(files, itertools.repeat(ext)))
+        pool.close()
+        pool.join()
 
 
 # Executing the FastQC algorithm
