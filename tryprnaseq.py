@@ -32,8 +32,8 @@ import subprocess
 import time
 #from optparse import OptionParser
 
+# Read in the variables, given by commandline options
 options = Rseq.terminal_options()
-
 if options.extension in ['fastq', 'fasta', 'gz']:
     ext = options.extension
     bow_indx = options.bow_index
