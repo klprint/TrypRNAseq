@@ -50,13 +50,12 @@ def make_ad_fasta(adapters_list, sample_name, no_adapters=80):
     import os
 
     # Storing the adapters in the folder adapters
-    os.system('mkdir adapters')
-
+    if not is_dir('adapters'):
+        os.system('mkdir adapters')
     # Generating the fasta list
     i = 1
     fasta = []
     for seq in adapters_list:
-
         # Creating only as much adapters in the fasta file
         # as are specified in no_adapters
         if i > no_adapters:

@@ -190,6 +190,7 @@ else:
 
 
 # Executing the FastQC algorithm
+adap_set = adap_max
 Rseq.print_line()
 if exec_adapters in ['y', 'Y', 'yes']:
     for fname in fnames:
@@ -204,7 +205,7 @@ if exec_adapters in ['y', 'Y', 'yes']:
         print('\n\n' + fname + ' adapter list will be generated.')
         ex_adapters = Rseq.extract_adapters(fname)
 
-        if adap_max == 'all':
+        if adap_set == 'all':
             adap_max = len(ex_adapters)
         else:
             adap_max = int(adap_max)
