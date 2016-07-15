@@ -25,15 +25,13 @@ import glob, os, datetime, itertools, subprocess, time, sys, importlib.util
 from multiprocessing.dummy import Pool as ThreadPool
 from threading import Thread
 
-
-
 def getScriptPath():
     return os.path.dirname(os.path.realpath(sys.argv[0]))
 
 script_path = getScriptPath()
-spec = importlib.util.spec_from_file_location("Rseq", script_path)
-Rseq = importlib.util.module_from_spec(spec)
-spec (Rseq)
+sys.path.append(script_path)
+
+import Rseq
 #################################################################################
 
 #from optparse import OptionParser
