@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #############################################################
 #                       TrypRNAseq                          #
 #          Automatic RNAseq raw file processing             #
