@@ -298,8 +298,9 @@ def create_reads_table(reads_dicts, folder):
                     fout.write('\t')
 
 # Read in commandline options and return the object to main
-def terminal_options():
+def terminal_options(script_path):
     from optparse import OptionParser
+    
     parser = OptionParser()
     parser.add_option('-i', '--extension',
         help = 'defines read files extension without \'.\' [fastq]')
@@ -310,11 +311,11 @@ def terminal_options():
 
     parser.add_option('-x', '--bow-index',
         help = 'bowtie2 index path with prefix (eg. \'bowtieindex/TbGenome\')',
-        default = 'bowtieindex/TbGenome')
+        default = script_path + '/bowtieindex/TbGenome')
 
     parser.add_option('-g', '--gtf',
         help = 'gtf file path for read count',
-        default = 'Tb_cds.gtf')
+        default = script_path + '/Tb_cds.gtf')
 
     parser.add_option('-a', '--remove-adapters',
         help = 'should identified adapters be removed? [y/n]',
