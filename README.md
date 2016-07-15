@@ -5,6 +5,7 @@ The TrypRNAseq pipeline is designed to take raw Illumina reads, does quality con
 # Information
 - This code is still pre-alpha and is now under construction and cleanup!
 - Till now, all reads will be aligned via bowtie2 up to 20-times (-k 20); in future releases this might be changed
+Please have a look at our [Roadmap](https://github.com/klprint/TrypRNAseq/wiki/Roadmap)-page for upcomming features.
 
 # Dependencies
 All dependencies need to be reachable via the command line.

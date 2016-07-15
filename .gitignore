@@ -22,4 +22,8 @@ testreads.fastq.gz
 
 *.html
 
-test_read_matrix.py
+test_read_matrix.
+
+TestFolder/
+
+.DS_Store
