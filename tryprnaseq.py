@@ -3,7 +3,7 @@
 #          Automatic RNAseq raw file processing             #
 #############################################################
 #               created by Kevin Leiss                      #
-#          last updated on April 20th, 2016                 #
+# individual parts by: Clementine Merce &  Elisha Muchunga  #
 #############################################################
 
 # Make sure you have installed:
