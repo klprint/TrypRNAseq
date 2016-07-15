@@ -3,7 +3,7 @@
 #          Automatic RNAseq raw file processing             #
 #############################################################
 #               created by Kevin Leiss                      #
-# individual parts by: Clementine Merce &  Elisha Muchunga  #
+#  individual parts by: Clementine Merce & Elisha Muchunga  #
 #############################################################
 
 # Make sure you have installed:
@@ -21,19 +21,25 @@
 # What you get in the end is a table consisting of 
 # the gene-IDs and the associated reads.
 
-import glob
-import os
-import Rseq
-import datetime
+import glob, os, datetime, itertools, subprocess, time, sys, importlib.util
 from multiprocessing.dummy import Pool as ThreadPool
-import itertools
 from threading import Thread
-import subprocess
-import time
+
+
+
+def getScriptPath():
+    return os.path.dirname(os.path.realpath(sys.argv[0]))
+
+script_path = getScriptPath()
+spec = importlib.util.spec_from_file_location("Rseq", script_path)
+Rseq = importlib.util.module_from_spec(spec)
+spec.loader.execute_module(Rseq)
+
+
 #from optparse import OptionParser
 
 # Read in the variables, given by commandline options
-options = Rseq.terminal_options()
+options = Rseq.terminal_options(script_path)
 if options.extension in ['fastq', 'fasta', 'gz']:
     ext = options.extension
     bow_indx = options.bow_index
@@ -110,8 +116,8 @@ else:
 
 
     if exec_default in ['y', 'yes', 'Y']:
-        bow_indx = 'bowtieindex/TbGenome'
-        genome_gtf = 'Tb_cds.gtf'
+        bow_indx = script_path + '/bowtieindex/TbGenome'
+        genome_gtf = script_path + '/Tb_cds.gtf'
         exec_adapters = 'y'
         exec_cutadapt = 'y'
         site = 'b'
