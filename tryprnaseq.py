@@ -33,8 +33,8 @@ def getScriptPath():
 script_path = getScriptPath()
 spec = importlib.util.spec_from_file_location("Rseq", script_path)
 Rseq = importlib.util.module_from_spec(spec)
-spec.loader.execute_module(Rseq)
-
+spec (Rseq)
+#################################################################################
 
 #from optparse import OptionParser
 
