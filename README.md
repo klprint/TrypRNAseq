@@ -14,7 +14,7 @@ All dependencies need to be reachable via the command line.
 - [FastQC v0.11.5](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 - [Cutadapt version 1.7.1](https://cutadapt.readthedocs.io/en/stable/)
 - [bowtie2 version 2.0.0-beta7](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
-- samtools
+- [samtools version 1.3.1](http://samtools.sourceforge.net/)
 
 # Workflow
 ![Flow of the TrypRNAseq pipeline. Rhomboids represent user influenceable decissions, rectangles files and ellipses commands and tools. Data, which the user needs to supply are shown in bold rectangles. O.S. = Overrepresented sequences as found by FastQC (sequences which make up more than 1% of all reads).](Figures/workflow.png)
@@ -50,10 +50,31 @@ Default-parameters:
    - Number of threads = Will be asked for
 ```
 
-# Programm parameters
+# Parameters
+## Pipeline Parameters
+Since 0.4 TrypRNAseq can be configured using commandline variables and flags. The following summarizes these options:
+
+| Option               | Description                                                                                                                                                                                                                                                                                                                       |
+|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -h --help            | Invokes the help message which summarizes all listed options                                                                                                                                                                                                                                                                      |
+| -i --extension       | Following this option, the extension of the raw read-files can be specified. The pipeline will look in the present directory for all files with this extension and will treat these as the pipeline's input. Do not enter the '.' before the file extension: e.g.: fastq NOT .fastq                                               |
+| -u --ext-unzip       | If '-i gz' is specified, the -u option needs to be added, giving the original file extension. This option was added since sometimes gzipped fastq files have the extension '.txt.gz' and therefore give no information what kind of file was gzipped. A TXT-file would hinder various downstream tools from functioning normally. |
+| -x --bow-index       | If the user wants to use his/her own bowtie-index for read-alignment, the -x option can be used. Specifiy here the directory of the index and the prefix of the index files. (e.g.: ./Index/TbGenome). [pipeline included bowtie index of _Trypanosoma brucei_ Tb927]                                                             |
+| -g --gtf             | Specifies the GTF file which characterizes the gene boundaries for read counting. [pipeline included GTF file for Tb927 coding sequences]                                                                                                                                                                                         |
+| -a --remove adapters | yes or no answer to whether identified overrepresented sequences should be removed prior to alignment. [yes]                                                                                                                                                                                                                      |
+| -q --fastqc          | yes or no answer to whether a quality analysis should be conducted on raw-reads using FastQC                                                                                                                                                                                                                                      |
+| -s --adapter-site    | Specifies where the adapters (overrepresented sequences) are expected. Options are 3'(a), 5'(g) or both possible(b) [b]                                                                                                                                                                                                           |
+| -l --min-length      | What is the minimal read length which should be kept after adapter removal? [30]                                                                                                                                                                                                                                                  |
+| --max-adapters       | How many of the (abundance sorted) overrepresented sequences (adapters) should be removed? Options are either a integer or 'all' which removes all identified overrepresented sequences. [all]                                                                                                                                    |
+| -t --threads         | How many threads should be allocated to the pipeline? [4]                                                                                                                                                                                                                                                                         |
+
+
+## Tool Parameters
 The TrypRNAseq pipeline uses different tools to process high throughput sequencing results and counting of the reads for specified parts of the genome (i.e. genes pr CDSs). All tools come with a variety of specific options and default parameters. Careful consideration of the settings nee to be done, to prevent wrong data processing.
 
-Tool                 | Settings
+__Table 1__: Used tools and corresponding settings. _user specified_ = These parameters are specified by the user in the starting dialogue.
+
+Tool                 | Settings for individual tool
 :--------------------|:-------------------------------------------------------------------
 cutadapt             | -a/-g/-b (_user specified_), minimal kept length (_user specified_)
 bowtie2              | -k 20 (align each read up to 20 times), -x (_user specified genome index_), -t (print wall-clock time), -S (input sam-files, pipeline generated), StdOut saved into .log files
@@ -62,10 +83,10 @@ samtools sort        | -m 2G (Use up to 2GB of RAM), -@ thread_number (_user spe
 samtools index       | default paramters, indexes the generated .bam files
 read counting script | reads in .gtf stored locations and uses samtools view to count the number of reads for each segment
 
-__Table 1__: Used tools and corresponding settings. _user specified_ = These parameters are specified by the user in the starting dialogue.
-
 # Pipeline output
 The pipeline produces different folders, containing individual steps. All intermediate files are saved by default, so users can review each step after the pipeline finished. The following summarizes the folders and their content.
+
+__Table 2__: Description of folders being created by TrypRNAseq pipeline.
 
 Folder          |Content
 :---------------|:-------------------------------------------------------------------------
@@ -77,7 +98,6 @@ bowalign        |Bowtie2 output folder, containing the alignment .sam files and 
 bam_files       |Samtools output, containing .bam and corresponding index files (.bai).
 __reads__       |Storage of the final read-counting. Each input file gets a separate tab-sepparated output file.
 
-__Table 2__: Description of folders being created by TrypRNAseq pipeline.
 
 
 # Attention
