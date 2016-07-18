@@ -14,6 +14,7 @@ All dependencies need to be reachable via the command line.
 - [FastQC v0.11.5](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 - [Cutadapt version 1.7.1](https://cutadapt.readthedocs.io/en/stable/)
 - [bowtie2 version 2.0.0-beta7](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
+- samtools
 
 # Workflow
 ![Flow of the TrypRNAseq pipeline. Rhomboids represent user influenceable decissions, rectangles files and ellipses commands and tools. Data, which the user needs to supply are shown in bold rectangles. O.S. = Overrepresented sequences as found by FastQC (sequences which make up more than 1% of all reads).](Figures/workflow.png)
