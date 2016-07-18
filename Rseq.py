@@ -129,7 +129,7 @@ def sam_process(filename, filepath, no_threads):
         os.system('mkdir bam_files')
     os.system('samtools view -u -S ' + filepath +
               ' | samtools sort -m 2G -@ '+ no_threads +' - -o ./bam_files/' +
-              filename + '_sorted')
+              filename + '_sorted.bam')
 
 
 def sam_index(filepath):
