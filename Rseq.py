@@ -1,11 +1,11 @@
 # RNAseq modules
 
 
-def fqc(raw_file):
+def fqc(raw_files, thread_no):
     import os
 
     os.system('mkdir fqc_result')
-    os.system('fastqc -o fqc_result --extract ./' + raw_file)
+    os.system('fastqc -t '+ thread_no +' -o fqc_result --extract ' + ' '.join(raw_files))
 
 # Creates a adapters-list, extracted out of a FastQC analysis.
 # The results must be stored in a folder called fqc_results
