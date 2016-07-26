@@ -32,21 +32,21 @@ In the following, the usage of TrypRNAseq is described. It is to be noted that t
 
 1. Download the latest [version](https://github.com/klprint/TrypRNAseq/releases)
 2. Add the files containing the reads (can be gzipped, NO tarballs, make sure all have the same extension)
-3. Start the pipeline using: __python3__ tryprnaseq.py
+3. Start the pipeline using: >__python3__ tryprnaseq.py or >./tryprnaseq
 4. Follow the instructions prompted in the terminal
 5. If alignment against _Trypanosoma brucei_ TREU927 genome is intended, the included bowtie2 index can be used
 6. If read counting should be done, using the coding sequences of the genes, the delivered GTF file (Tb_cds.gtf) can be used
 7. After the pipeline finished, the folder with tab separated read counts will open automatically
-8. For data analysis take care, that some genes are annotated by TrypDB with two, or more, CDS, therefore sum all reads up, originating in the same geneID
+8. Since some genes are annotated with multiple CDS, the pipeline will add up all reads of each individual CDS to the same geneID. geneID.a
 
 The default settings are:
 
 ```
-Default-parameters: 
-   - Provided Bowtie Tryp. index 
-   - Provided .gtf file for read count 
-   - Remove all found adapters on both sides 
-   - Keep a minimal length of 30bp/read, discard all shorter 
+Default-parameters:
+   - Provided Bowtie Tryp. index
+   - Provided .gtf file for read count
+   - Remove all found adapters on both sides
+   - Keep a minimal length of 30bp/read, discard all shorter
    - Number of threads = Will be asked for
 ```
 
@@ -96,7 +96,7 @@ adapters        |.fasta files of the identified overrepresented sequences. These
 rm_adapt        |Output of cutadapt. For each sequencing file, one folder is created. Each contains 3 Files: X\_trimmed.X / X\_untrimmed.X / X\_processed.X. The latter contains the summary of both previous files: Trimmed and untrimmed sequences and is used by bowtie2 for read alignment.
 bowalign        |Bowtie2 output folder, containing the alignment .sam files and a .log file for each input. The log saves bowtie2's statistics
 bam_files       |Samtools output, containing .bam and corresponding index files (.bai).
-__reads__       |Storage of the final read-counting. Each input file gets a separate tab-sepparated output file.
+__reads__       |Storage of the final read-counting. Each input file gets a separate tab-sepparated output file. Additionally, a summarized output matrix with all read-counts is generated. The header line includes the original file name.
 
 
 
