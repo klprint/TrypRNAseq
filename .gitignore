@@ -26,3 +26,5 @@ test_read_matrix.
 TestFolder/
 
 .DS_Store
+
+__pycache__

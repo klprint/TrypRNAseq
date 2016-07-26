@@ -128,8 +128,8 @@ def sam_process(filename, filepath, no_threads):
     if not is_dir('bam_files'):
         os.system('mkdir bam_files')
     os.system('samtools view -u -S ' + filepath +
-              ' | samtools sort -m 2G -@ '+ no_threads +' - -o ./bam_files/' +
-              filename + '_sorted.bam')
+              ' | samtools sort -m 2G -@ '+ no_threads +' - ./bam_files/' +
+              filename + '_sorted')
 
 
 def sam_index(filepath):
@@ -300,7 +300,7 @@ def create_reads_table(reads_dicts, folder):
 # Read in commandline options and return the object to main
 def terminal_options(script_path):
     from optparse import OptionParser
-    
+
     parser = OptionParser()
     parser.add_option('-i', '--extension',
         help = 'defines read files extension without \'.\' [fastq]')
