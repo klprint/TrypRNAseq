@@ -16,10 +16,10 @@
 # Place the script in a folder with the raw data
 # and make sure that only these data have the later specified
 # file-extension.
-# Then lean back and enjoy a coffee.. or three since 
+# Then lean back and enjoy a coffee.. or three since
 # analysis will take a while.
 #
-# What you get in the end is a table consisting of 
+# What you get in the end is a table consisting of
 # the gene-IDs and the associated reads.
 
 import glob, os, datetime, itertools, subprocess, time, sys, importlib.util
@@ -56,7 +56,7 @@ if options.extension in ['fastq', 'fasta', 'gz']:
     site = options.adapter_site
     min_len = options.min_length
     adap_max = options.max_adapters
-    
+
     files = glob.glob('./*.' + ext)
     # Generating a list of to be processed filenames:
     fnames = []
@@ -198,12 +198,13 @@ else:
 adap_set = adap_max
 Rseq.print_line()
 if exec_adapters in ['y', 'Y', 'yes']:
-    for fname in fnames:
+    # Analyzing the data with FastQC
+    print('\nFastQC data analysis\n')
+    Rseq.fqc([file_name + '.' + ext for file_name in fnames], thread_no)
+    print('\nFastQC finished\n')
 
-        # Analyzing the data with FastQC
-        print('\nFastQC data analysis\n')
-        Rseq.fqc(fname + '.' + ext)
-        print('\nFastQC finished\n')
+    # Generating the adapter list
+    for fname in fnames:
 
         # Generating a adapters list
         # containing the 80 most abundant adapters

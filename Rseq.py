@@ -1,11 +1,11 @@
 # RNAseq modules
 
 
-def fqc(raw_file):
+def fqc(raw_files, thread_no):
     import os
 
     os.system('mkdir fqc_result')
-    os.system('fastqc -o fqc_result --extract ./' + raw_file)
+    os.system('fastqc -t '+ thread_no +' -o fqc_result --extract ' + ' '.join(raw_files))
 
 # Creates a adapters-list, extracted out of a FastQC analysis.
 # The results must be stored in a folder called fqc_results
@@ -128,8 +128,8 @@ def sam_process(filename, filepath, no_threads):
     if not is_dir('bam_files'):
         os.system('mkdir bam_files')
     os.system('samtools view -u -S ' + filepath +
-              ' | samtools sort -m 2G -@ '+ no_threads +' - ./bam_files/' +
-              filename + '_sorted')
+              ' | samtools sort -m 2G -@ '+ no_threads +' - -o ./bam_files/' +
+              filename + '_sorted.bam')
 
 
 def sam_index(filepath):
