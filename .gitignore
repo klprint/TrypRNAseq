@@ -13,8 +13,6 @@ reads
 
 gzipped_reads
 
-testreads.fastq.gz
-
 *.gz
 
 *.log
