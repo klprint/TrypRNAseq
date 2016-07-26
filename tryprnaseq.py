@@ -193,7 +193,6 @@ else:
         pool.close()
         pool.join()
 
-
 # Executing the FastQC algorithm
 adap_set = adap_max
 Rseq.print_line()
