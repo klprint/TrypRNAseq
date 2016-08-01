@@ -107,7 +107,7 @@ def cutadapt(filenames, ext, site, seq_min_len):
 # The genome index for bowtie is stored unter bow_index
 # bow_index consists of the absolute path and the prefix of the indices
 # eg. Tbgenome
-def bowtie(filename, filepath, bow_index, no_threads = '2'):
+def bowtie(filename, filepath, bow_index, no_threads = '2', k = '20'):
     import os
     if not is_dir('bowalign'):
         os.system('mkdir bowalign')
@@ -118,7 +118,7 @@ def bowtie(filename, filepath, bow_index, no_threads = '2'):
     # If your computer runs too slow, decrease the integer after -p.
     # Besides it saves the statistics of each alignment to a file trailed by
     # _log.txt
-    os.system('bowtie2 -k 20 -t -p ' + no_threads + ' -x ' + bow_index + ' ' + filepath +
+    os.system('bowtie2 -k '+ k +' -t -p ' + no_threads + ' -x ' + bow_index + ' ' + filepath +
               ' -S ./bowalign/' + filename +
               '_bow.sam 2> ./bowalign/' + filename + '_log.txt')
 
@@ -341,7 +341,11 @@ def terminal_options(script_path):
 
     parser.add_option('-t', '--threads',
         default = '4',
-        help = 'number of threads')
+        help = 'number of threads'),
+
+    parser.add_option('-k', '--max-align',
+        default = '20',
+        help = 'Max number of alignments per read. [20]')
 
     (options, args) = parser.parse_args()
     return(options)

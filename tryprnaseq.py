@@ -45,6 +45,7 @@ if options.extension in ['fastq', 'fasta', 'gz']:
     genome_gtf = options.gtf
     thread_no = options.threads
     exec_adapters = options.fastqc
+    no_k = options.max_align
 
     exec_cutadapt = options.remove_adapters
 
@@ -255,7 +256,7 @@ if exec_cutadapt in ['y', 'Y', 'yes']:
         fpath = './rm_adapt/' + fname + '/' + fname + '_processed.fastq'
         # Here bowtie is started using the processed data
         print('\n\nStarting alignment of ' + fname)
-        Rseq.bowtie(fname, filepath=fpath, bow_index=bow_indx, no_threads = thread_no)
+        Rseq.bowtie(fname, filepath=fpath, bow_index=bow_indx, no_threads = thread_no, k = no_k)
 # ... or on the original reads
 else:
     for fname in fnames:
@@ -265,7 +266,7 @@ else:
         # Here bowtie is started using the raw data, if no adapter removal was
         # done
         print('\n\nStarting alignment of ' + fname)
-        Rseq.bowtie(filename=fname, filepath=fpath, bow_index=bow_indx, no_threads = thread_no)
+        Rseq.bowtie(filename=fname, filepath=fpath, bow_index=bow_indx, no_threads = thread_no, k = no_k)
 
 
 for fname in fnames:

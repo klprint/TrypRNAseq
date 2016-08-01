@@ -28,3 +28,7 @@ TestFolder/
 .DS_Store
 
 __pycache__
+
+*.rdx
+
+R-Analysis/
