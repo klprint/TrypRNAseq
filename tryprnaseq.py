@@ -178,20 +178,6 @@ settingslog.write('-----TrypRNAseq-----\n'
 Rseq.print_line()
 # Unzipping gzipped files and adding correct extension
 
-# This runs, if command line tool is used
-# if options.extension in ['fastq', 'fasta', 'gz']:
-#     if ext == 'gz':
-#         os.system('mkdir gzipped_reads')
-#         print('\nYour files are compressed. They will be decompressed.')
-#         print('Extracting files')
-#         ext = options.ext_unzip
-#         pool = ThreadPool(int(thread_no))
-#         pool.starmap(Rseq.gz_process, zip(files, itertools.repeat(ext)))
-#         pool.close()
-#         pool.join()
-#
-# # This starts if the interactive dialogue is used to set up the pipeline
-# else:
 if ext == 'gz':
     os.system('mkdir gzipped_reads')
     print('\nYour files are compressed. They will be decompressed.')
@@ -236,10 +222,14 @@ if exec_adapters in ['y', 'Y', 'yes']:
 Rseq.print_line()
 if exec_cutadapt in ['y', 'Y', 'yes']:
     print('Cutadapt started')
+    # Generating the cutadapt command
     commands, summaries = Rseq.cutadapt(fnames, ext, site, min_len)
     processes = []
+    # Starting cutadapt in parallel
     for command in commands:
         processes.append(subprocess.Popen(command, shell=True))
+    # Check if a process is still running, if all are finished go on
+    # to the next step.
     while 1:
         status = []
         status = [x.poll() for x in processes]
