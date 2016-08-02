@@ -50,6 +50,9 @@ Default-parameters:
    - Number of threads = Will be asked for
 ```
 
+## New: Accessible on any folder
+If a central installation of TrypRNAseq is preferred, add the location of tryprnaseq.py to the $PATH variable and allow tryprnaseq.py being executed (chmod 755 tryprnaseq.py). If this is done, one can invoke the pipeline by typing tryprnaseq.py in the terminal. The pipeline then uses the working directory of the terminal.
+
 # Parameters
 ## Pipeline Parameters
 Since 0.4 TrypRNAseq can be configured using commandline variables and flags. The following summarizes these options. Values in squared brackets are default settings if the option is ommited. If no option is specified, not even '-i', the terminal dialoque is started which guids the user through pipeline set-up.
