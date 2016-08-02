@@ -172,27 +172,34 @@ settingslog.write('-----TrypRNAseq-----\n'
 
 Rseq.print_line()
 # Unzipping gzipped files and adding correct extension
-if options.extension in ['fastq', 'fasta', 'gz']:
-    if ext == 'gz':
-        os.system('mkdir gzipped_reads')
-        print('\nYour files are compressed. They will be decompressed.')
-        print('Extracting files')
+
+# This runs, if command line tool is used
+# if options.extension in ['fastq', 'fasta', 'gz']:
+#     if ext == 'gz':
+#         os.system('mkdir gzipped_reads')
+#         print('\nYour files are compressed. They will be decompressed.')
+#         print('Extracting files')
+#         ext = options.ext_unzip
+#         pool = ThreadPool(int(thread_no))
+#         pool.starmap(Rseq.gz_process, zip(files, itertools.repeat(ext)))
+#         pool.close()
+#         pool.join()
+#
+# # This starts if the interactive dialogue is used to set up the pipeline
+# else:
+if ext == 'gz':
+    os.system('mkdir gzipped_reads')
+    print('\nYour files are compressed. They will be decompressed.')
+    if options.extension == 'gz': # checks whether commandline tool is used
         ext = options.ext_unzip
-        pool = ThreadPool(int(thread_no))
-        pool.starmap(Rseq.gz_process, zip(files, itertools.repeat(ext)))
-        pool.close()
-        pool.join()
-else:
-    if ext == 'gz':
-        os.system('mkdir gzipped_reads')
-        print('\nYour files are compressed. They will be decompressed.')
+    else:  # or the interactive dialogue
         ext = input('Please specify the file extension of the decompressed file [fasta, fastq]: ')
-        # Parallelized extraction and copying
-        print('Extracting files')
-        pool = ThreadPool(int(thread_no))
-        pool.starmap(Rseq.gz_process, zip(files, itertools.repeat(ext)))
-        pool.close()
-        pool.join()
+    # Parallelized extraction and copying
+    print('Extracting files')
+    pool = ThreadPool(int(thread_no))
+    pool.starmap(Rseq.gz_process, zip(files, itertools.repeat(ext)))
+    pool.close()
+    pool.join()
 
 # Executing the FastQC algorithm
 adap_set = adap_max
