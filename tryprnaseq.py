@@ -109,6 +109,7 @@ else:
         '- Provided .gtf file for read count \n'
         '- Remove all found adapters on both sides \n'
         '- Keep a minimal length of 30bp/read, discard all shorter \n'
+        '- Up to 20 alignments per read \n'
         '- Number of threads = Will be asked for'))
 
     exec_default = input('Should the pipeline be executed with default parameters? y/n :')
@@ -123,6 +124,7 @@ else:
         site = 'b'
         min_len = '30'
         adap_max = 'all'
+        no_k = '20'
 
 # If not, let the user specify the parameters
     else:
@@ -157,6 +159,8 @@ else:
             adap_max = input(
                 'How many adapters should be used for removal (the more the longer it takes)[int OR all]: ')
 
+        no_k = input('How often should one read allowed be aligned to the reference?[int]: ')
+
 
 # Creating a log-file
 settingslog = open('logfile.log', 'w')
@@ -167,7 +171,8 @@ settingslog.write('-----TrypRNAseq-----\n'
     'GTF-File:\t' + genome_gtf + '\n'
     'Adapters removed?\t' + exec_cutadapt + '\n'
     'Minimal kept length:\t' + min_len + '\n'
-    'Number of rem. adapters:\t' + adap_max)
+    'Number of rem. adapters:\t' + adap_max + '\n'
+    'Number of alignments per read:\t' + no_k)
 
 
 Rseq.print_line()
