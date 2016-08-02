@@ -285,11 +285,6 @@ for fname in fnames:
     Rseq.sam_index(fpath)
 
 # Doing the read count
-#for fname in fnames:
-#    fpath = './bam_files/' + fname + '_sorted.bam'
-#    Rseq.print_line()
-#    print('Counting Reads for ' + fname)
-#    Rseq.cds_only_counts(genome_gtf, fpath, fname)
 
 fpaths = []
 for fname in fnames:
