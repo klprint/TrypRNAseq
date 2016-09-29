@@ -106,6 +106,9 @@ __reads__       |Storage of the final read-counting. Each input file gets a sepa
 # Attention
 Be careful that you have enough storage capacity, since the pipeline stores intermediate files (that you can review the process afterwards). This means, you should provide at least 400GB of storage (high estimation, depending on your raw read-files' size).
 
+# Contact
+If you have any questions don't hesitate to contact me. Either you open a issue, or write an email to subicere(at)protonmail.com. 
+
 # Licence
 This pipeline was created by Kevin Leiss of the [Clayton lab](http://www.zmbh.uni-heidelberg.de/clayton/default.shtml) (ZMBH, Centre for Molecular Biology Heidelberg, Germany). Individual parts are developed by Clementine Merce and Elisha Muchunga.
 
