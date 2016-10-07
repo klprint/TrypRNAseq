@@ -7,12 +7,6 @@
 #  individual parts by: Clementine Merce & Elisha Muchunga  #
 #############################################################
 
-# Make sure you have installed:
-# -fastqc
-# -bowtie2
-# -cutadapt
-# -samtools
-
 # Place the script in a folder with the raw data
 # and make sure that only these data have the later specified
 # file-extension.
@@ -20,7 +14,7 @@
 # analysis will take a while.
 #
 # What you get in the end is a table consisting of
-# the gene-IDs and the associated reads.
+# the gene-IDs and the associated readnumbers.
 
 import glob, os, datetime, itertools, subprocess, time, sys, importlib.util
 from multiprocessing.dummy import Pool as ThreadPool
