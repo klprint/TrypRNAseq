@@ -10,7 +10,8 @@ Please have a look at our [Roadmap](https://github.com/klprint/TrypRNAseq/wiki/R
 # Dependencies
 All dependencies need to be reachable via the command line.
 
-- __Python version 3__
+- Mac operating system
+- __Python version 3__ (callable by 'python3' in terminal)
 - [FastQC v0.11.5](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 - [Cutadapt version 1.7.1](https://cutadapt.readthedocs.io/en/stable/)
 - [bowtie2 version 2.0.0-beta7](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
@@ -107,7 +108,7 @@ __reads__       |Storage of the final read-counting. Each input file gets a sepa
 Be careful that you have enough storage capacity, since the pipeline stores intermediate files (that you can review the process afterwards). This means, you should provide at least 400GB of storage (high estimation, depending on your raw read-files' size).
 
 # Contact
-If you have any questions don't hesitate to contact me. Either you open a issue, or write an email to subicere(at)protonmail.com. 
+If you have any questions don't hesitate to contact me. Either you open a issue, or write an email to kevin.leiss(at)protonmail.com.
 
 # Licence
 This pipeline was created by Kevin Leiss of the [Clayton lab](http://www.zmbh.uni-heidelberg.de/clayton/default.shtml) (ZMBH, Centre for Molecular Biology Heidelberg, Germany). Individual parts are developed by Clementine Merce and Elisha Muchunga.
