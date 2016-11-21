@@ -1,0 +1,284 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Tryprnaseq by klprint</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/klprint/TrypRNAseq">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/klprint/TrypRNAseq/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/klprint/TrypRNAseq/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Tryprnaseq</h1>
+          <p>Pipeline for RNAseq read counting of Trypanosoma reads</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/klprint">klprint</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <p><a href="https://zenodo.org/badge/latestdoi/61698762"><img src="https://zenodo.org/badge/61698762.svg" alt="DOI"></a></p>
+
+<h1>
+<a id="tryprnaseq" class="anchor" href="#tryprnaseq" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>TrypRNAseq</h1>
+
+<p>The TrypRNAseq pipeline is designed to take raw Illumina reads, does quality control, removal of overrepresented sequences and alignes the processed reads to a genome. In the end it counts the reads to a user-supplied .gtf file and produces a tab-sepparated file summarizing its results. Users should only specify in the beginning parameters which are asked for in a command-line dialogue.</p>
+
+<h1>
+<a id="information" class="anchor" href="#information" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Information</h1>
+
+<ul>
+<li>This code is still pre-alpha and is now under construction and cleanup!</li>
+<li>Till now, all reads will be aligned via bowtie2 up to 20-times (-k 20); in future releases this might be changed
+Please have a look at our <a href="https://github.com/klprint/TrypRNAseq/wiki/Roadmap">Roadmap</a>-page for upcomming features.</li>
+</ul>
+
+<h1>
+<a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dependencies</h1>
+
+<p>All dependencies need to be reachable via the command line.</p>
+
+<ul>
+<li><strong>Python version 3</strong></li>
+<li><a href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/">FastQC v0.11.5</a></li>
+<li><a href="https://cutadapt.readthedocs.io/en/stable/">Cutadapt version 1.7.1</a></li>
+<li><a href="http://bowtie-bio.sourceforge.net/bowtie2/index.shtml">bowtie2 version 2.0.0-beta7</a></li>
+<li><a href="http://samtools.sourceforge.net/">samtools version 1.3.1</a></li>
+</ul>
+
+<h1>
+<a id="workflow" class="anchor" href="#workflow" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Workflow</h1>
+
+<p><img src="Figures/workflow.png" alt="Flow of the TrypRNAseq pipeline. Rhomboids represent user influenceable decissions, rectangles files and ellipses commands and tools. Data, which the user needs to supply are shown in bold rectangles. O.S. = Overrepresented sequences as found by FastQC (sequences which make up more than 1% of all reads)."></p>
+
+<p><strong>Figure 1</strong>: Flow of the TrypRNAseq pipeline. Rhomboids represent user influenceable decissions, rectangles files and ellipses commands and tools. Data, which the user needs to supply are shown in bold rectangles. O.S. = Overrepresented sequences as found by FastQC (sequences which make up more than 1% of all reads</p>
+
+<p>The Illumina sequencing results are fed into the pipeline either as .fastq or .gz file. If the reads are gzipped, they will be extracted and saved as fastq (fasta files are also possible, but not recommeneded, since no information about the quality is saved). The user specifies whether the input is given to FastQC for quality control and if the found overrepresented sequences (mostly Illumina adapters and rRNA reads) should be removed by cutadapt. The generated files are aligned to the user-provided genome as a bowtie2 index. Bowtie2 generates .sam files and for each sequencing file a .log file. The .log file can be reviewed – it contains informations about the time needed for alignment and the alignment itself (how many reads aligned / once / more than once?). The sam file is converted into binary .bam files by samtools and an index (.bai) for each .bam file is generated. Besides, the pipeline directly sorts the .bam files' content for user review using for example <a href="http://www.sanger.ac.uk/science/tools/artemis">Artemis</a>. In the end, a python script uses samtools and the user-provided gene annotation file (.gtf) to count the reads for each annotated gene (region, depending on the .gtf file).</p>
+
+<h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h1>
+
+<p>In the following, the usage of TrypRNAseq is described. It is to be noted that till now, TrypRNAseq does not support paired end reads. This feature might be implemented in later versions.</p>
+
+<ol>
+<li>Download the latest <a href="https://github.com/klprint/TrypRNAseq/releases">version</a>
+</li>
+<li>Add the files containing the reads (can be gzipped, NO tarballs, make sure all have the same extension)</li>
+<li>Start the pipeline using: &gt;<strong>python3</strong> tryprnaseq.py or &gt;./tryprnaseq</li>
+<li>Follow the instructions prompted in the terminal</li>
+<li>If alignment against <em>Trypanosoma brucei</em> TREU927 genome is intended, the included bowtie2 index can be used</li>
+<li>If read counting should be done, using the coding sequences of the genes, the delivered GTF file (Tb_cds.gtf) can be used</li>
+<li>After the pipeline finished, the folder with tab separated read counts will open automatically</li>
+<li>Since some genes are annotated with multiple CDS, the pipeline will add up all reads of each individual CDS to the same geneID. geneID.a</li>
+</ol>
+
+<p>The default settings are:</p>
+
+<pre><code>Default-parameters:
+   - Provided Bowtie Tryp. index
+   - Provided .gtf file for read count
+   - Remove all found adapters on both sides
+   - Keep a minimal length of 30bp/read, discard all shorter
+   - Number of threads = Will be asked for
+</code></pre>
+
+<h2>
+<a id="new-accessible-on-any-folder" class="anchor" href="#new-accessible-on-any-folder" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>New: Accessible on any folder</h2>
+
+<p>If a central installation of TrypRNAseq is preferred, add the location of tryprnaseq.py to the $PATH variable and allow tryprnaseq.py being executed (chmod 755 tryprnaseq.py). If this is done, one can invoke the pipeline by typing tryprnaseq.py in the terminal. The pipeline then uses the working directory of the terminal.</p>
+
+<h1>
+<a id="parameters" class="anchor" href="#parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parameters</h1>
+
+<h2>
+<a id="pipeline-parameters" class="anchor" href="#pipeline-parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Pipeline Parameters</h2>
+
+<p>Since 0.4 TrypRNAseq can be configured using commandline variables and flags. The following summarizes these options. Values in squared brackets are default settings if the option is ommited. If no option is specified, not even '-i', the terminal dialoque is started which guids the user through pipeline set-up.</p>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-h --help</td>
+<td>Invokes the help message which summarizes all listed options</td>
+</tr>
+<tr>
+<td>-i --extension</td>
+<td>Following this option, the extension of the raw read-files can be specified. The pipeline will look in the present directory for all files with this extension and will treat these as the pipeline's input. Do not enter the '.' before the file extension: e.g.: fastq NOT .fastq [REQUIRED]</td>
+</tr>
+<tr>
+<td>-u --ext-unzip</td>
+<td>If '-i gz' is specified, the -u option needs to be added, giving the original file extension. This option was added since sometimes gzipped fastq files have the extension '.txt.gz' and therefore give no information what kind of file was gzipped. A TXT-file would hinder various downstream tools from functioning normally.</td>
+</tr>
+<tr>
+<td>-x --bow-index</td>
+<td>If the user wants to use his/her own bowtie-index for read-alignment, the -x option can be used. Specifiy here the directory of the index and the prefix of the index files. (e.g.: ./Index/TbGenome). [pipeline included bowtie index of <em>Trypanosoma brucei</em> Tb927]</td>
+</tr>
+<tr>
+<td>-g --gtf</td>
+<td>Specifies the GTF file which characterizes the gene boundaries for read counting. [pipeline included GTF file for Tb927 coding sequences]</td>
+</tr>
+<tr>
+<td>-a --remove adapters</td>
+<td>yes or no answer to whether identified overrepresented sequences should be removed prior to alignment. [yes]</td>
+</tr>
+<tr>
+<td>-q --fastqc</td>
+<td>yes or no answer to whether a quality analysis should be conducted on raw-reads using FastQC</td>
+</tr>
+<tr>
+<td>-s --adapter-site</td>
+<td>Specifies where the adapters (overrepresented sequences) are expected. Options are 3'(a), 5'(g) or both possible(b) [b]</td>
+</tr>
+<tr>
+<td>-l --min-length</td>
+<td>What is the minimal read length which should be kept after adapter removal? [30]</td>
+</tr>
+<tr>
+<td>--max-adapters</td>
+<td>How many of the (abundance sorted) overrepresented sequences (adapters) should be removed? Options are either a integer or 'all' which removes all identified overrepresented sequences. [all]</td>
+</tr>
+<tr>
+<td>-t --threads</td>
+<td>How many threads should be allocated to the pipeline? [4]</td>
+</tr>
+</tbody>
+</table>
+
+<h2>
+<a id="tool-parameters" class="anchor" href="#tool-parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tool Parameters</h2>
+
+<p>The TrypRNAseq pipeline uses different tools to process high throughput sequencing results and counting of the reads for specified parts of the genome (i.e. genes pr CDSs). All tools come with a variety of specific options and default parameters. Careful consideration of the settings nee to be done, to prevent wrong data processing.</p>
+
+<p><strong>Table 1</strong>: Used tools and corresponding settings. <em>user specified</em> = These parameters are specified by the user in the starting dialogue.</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Tool</th>
+<th align="left">Settings for individual tool</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">cutadapt</td>
+<td align="left">-a/-g/-b (<em>user specified</em>), minimal kept length (<em>user specified</em>)</td>
+</tr>
+<tr>
+<td align="left">bowtie2</td>
+<td align="left">-k 20 (align each read up to 20 times), -x (<em>user specified genome index</em>), -t (print wall-clock time), -S (input sam-files, pipeline generated), StdOut saved into .log files</td>
+</tr>
+<tr>
+<td align="left">samtools view</td>
+<td align="left">-b (generate .bam files), -S (read in .sam files)</td>
+</tr>
+<tr>
+<td align="left">samtools sort</td>
+<td align="left">-m 2G (Use up to 2GB of RAM), -@ thread_number (<em>user specified</em>)</td>
+</tr>
+<tr>
+<td align="left">samtools index</td>
+<td align="left">default paramters, indexes the generated .bam files</td>
+</tr>
+<tr>
+<td align="left">read counting script</td>
+<td align="left">reads in .gtf stored locations and uses samtools view to count the number of reads for each segment</td>
+</tr>
+</tbody>
+</table>
+
+<h1>
+<a id="pipeline-output" class="anchor" href="#pipeline-output" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Pipeline output</h1>
+
+<p>The pipeline produces different folders, containing individual steps. All intermediate files are saved by default, so users can review each step after the pipeline finished. The following summarizes the folders and their content.</p>
+
+<p><strong>Table 2</strong>: Description of folders being created by TrypRNAseq pipeline.</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Folder</th>
+<th align="left">Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">gzipped_reads</td>
+<td align="left">If the reads file is gzipped in the beginning, the original .gz files will be copied here.</td>
+</tr>
+<tr>
+<td align="left">fqc_result</td>
+<td align="left">Output of the FastQC quality control.</td>
+</tr>
+<tr>
+<td align="left">adapters</td>
+<td align="left">.fasta files of the identified overrepresented sequences. These sequences are used by cutadapt for adapter removal.</td>
+</tr>
+<tr>
+<td align="left">rm_adapt</td>
+<td align="left">Output of cutadapt. For each sequencing file, one folder is created. Each contains 3 Files: X_trimmed.X / X_untrimmed.X / X_processed.X. The latter contains the summary of both previous files: Trimmed and untrimmed sequences and is used by bowtie2 for read alignment.</td>
+</tr>
+<tr>
+<td align="left">bowalign</td>
+<td align="left">Bowtie2 output folder, containing the alignment .sam files and a .log file for each input. The log saves bowtie2's statistics</td>
+</tr>
+<tr>
+<td align="left">bam_files</td>
+<td align="left">Samtools output, containing .bam and corresponding index files (.bai).</td>
+</tr>
+<tr>
+<td align="left"><strong>reads</strong></td>
+<td align="left">Storage of the final read-counting. Each input file gets a separate tab-sepparated output file. Additionally, a summarized output matrix with all read-counts is generated. The header line includes the original file name.</td>
+</tr>
+</tbody>
+</table>
+
+<h1>
+<a id="attention" class="anchor" href="#attention" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Attention</h1>
+
+<p>Be careful that you have enough storage capacity, since the pipeline stores intermediate files (that you can review the process afterwards). This means, you should provide at least 400GB of storage (high estimation, depending on your raw read-files' size).</p>
+
+<h1>
+<a id="contact" class="anchor" href="#contact" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contact</h1>
+
+<p>If you have any questions don't hesitate to contact me. Either you open a issue, or write an email to subicere(at)protonmail.com. </p>
+
+<h1>
+<a id="licence" class="anchor" href="#licence" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Licence</h1>
+
+<p>This pipeline was created by Kevin Leiss of the <a href="http://www.zmbh.uni-heidelberg.de/clayton/default.shtml">Clayton lab</a> (ZMBH, Centre for Molecular Biology Heidelberg, Germany). Individual parts are developed by Clementine Merce and Elisha Muchunga.</p>
+
+<p><a href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"></a><br>TrypRNAseq by <a href="https://github.com/klprint/TrypRNAseq">Kevin Leiss</a> is licensed under a <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
