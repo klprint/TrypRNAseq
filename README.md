@@ -51,7 +51,7 @@ Default-parameters:
    - Number of threads = Will be asked for
 ```
 
-## New: Accessible on any folder
+## Accessible on any folder
 If a central installation of TrypRNAseq is preferred, add the location of tryprnaseq.py to the $PATH variable and allow tryprnaseq.py being executed (chmod 755 tryprnaseq.py). If this is done, one can invoke the pipeline by typing tryprnaseq.py in the terminal. The pipeline then uses the working directory of the terminal.
 
 # Parameters
@@ -102,6 +102,17 @@ bowalign        |Bowtie2 output folder, containing the alignment .sam files and 
 bam_files       |Samtools output, containing .bam and corresponding index files (.bai).
 __reads__       |Storage of the final read-counting. Each input file gets a separate tab-sepparated output file. Additionally, a summarized output matrix with all read-counts is generated. The header line includes the original file name.
 
+# Manually updating files
+If never versions of the gene-annotation or the genome are available, you can update them on your own. Just make sure that the genome fits to the genome-annotation. Both need to be the same version!
+
+## Update the Bowtie2 Index of the genome for alignments
+- Go to the folder 'bowtieindex'
+- Delete (recommeneded: move) all files into another directory
+- Index the new version of the genome with bowtie2 and use the prefix 'TbGenome'
+- Place all generated files in the 'bowtieindex' folder
+
+## Update the gene-annotation GTF file
+- Generate a new gene-annotation file (gtf) of the genome and name it 'Tb_cds.gtf' and place it in the TrypRNAseq parent folder
 
 
 # Attention
